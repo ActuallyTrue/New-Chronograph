@@ -31,6 +31,9 @@ public class Player_controller : MonoBehaviour
     float velocityXSmoothing;
 
     bool facingRight = true;
+    public GameObject platform;
+    public bool possessing;
+
 
 
     Movement2D Movement;
@@ -87,7 +90,16 @@ public class Player_controller : MonoBehaviour
 
         if(Input.GetButtonDown("Possess"))
         {
+            ChangeParent(platform);
+            velocity = new Vector3 (0,0,0);
+            gravity = 0;
 
+        }
+
+        if (Input.GetButtonDown("Cancel"))
+        {
+            RevertParent();
+            gravity = -(2 * maxJumpHeight) / Mathf.Pow(timeToJumpApex, 2);
 
         }
 
@@ -96,6 +108,23 @@ public class Player_controller : MonoBehaviour
         //MovePlayer is being called by both the player and the moving platforms, so we move this above and below collision to after the movement so that we have the correct values after we move the player with our own input
         //if you're hitting something above you or below you, velocity will change to zero.
         Movement.GravityCollisions(ref velocity);
+    }
+
+
+    void ChangeParent(GameObject platform) {
+        possessing = true;
+        transform.parent = platform.transform;
+            transform.position = platform.transform.position;
+      
+
+    }
+
+    //Revert the parent of object 2.
+    void RevertParent()
+    {
+        possessing = false;
+        transform.parent = null;
+
     }
 
     void Flip()
