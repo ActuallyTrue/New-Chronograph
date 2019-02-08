@@ -89,17 +89,16 @@ public class Movement2D : MonoBehaviour
         {
             DescendSlope(ref velocity);
         }
-        if (possessing == false)
-        {
-            HorizontalCollisions(ref velocity);
-        }
+
+
+        HorizontalCollisions(ref velocity);
+        
 
         if (velocity.y != 0)
         {
-            if (possessing == false)
-            {
-                VerticalCollisions(ref velocity);
-            }
+        
+            VerticalCollisions(ref velocity);
+
         }
 
         if (standingOnPlatform == true)
