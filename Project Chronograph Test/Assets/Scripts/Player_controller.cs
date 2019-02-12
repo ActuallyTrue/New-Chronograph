@@ -54,65 +54,72 @@ public class Player_controller : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //animator.SetBool("isGrounded", Movement.collisions.below || Movement.passengerCollisions.standingOnPlatform);
-        //animator.SetFloat("fallSpeed", velocity.y * Time.deltaTime);
-        Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-        int wallDirX = (Movement.collisions.left) ? -1 : 1;
+
+            //animator.SetBool("isGrounded", Movement.collisions.below || Movement.passengerCollisions.standingOnPlatform);
+            //animator.SetFloat("fallSpeed", velocity.y * Time.deltaTime);
+            Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+            int wallDirX = (Movement.collisions.left) ? -1 : 1;
 
             Movement.CalculatePlayerVelocity(ref velocity, input, moveSpeed, gravity, ref velocityXSmoothing, accelerationTimeGrounded, accelerationTimeAirborne);
 
-       //animator.SetFloat("Speed", Mathf.Abs(velocity.x * Time.deltaTime));
+            //animator.SetFloat("Speed", Mathf.Abs(velocity.x * Time.deltaTime));
 
-        if (facingRight == false && input.x > 0)
-        {
-            Flip();
-        }
-        else if (facingRight == true && input.x < 0)
-        {
-            Flip();
-        }
+            if (facingRight == false && input.x > 0)
+            {
+                Flip();
+            }
+            else if (facingRight == true && input.x < 0)
+            {
+                Flip();
+            }
 
-        bool wallSliding = false;
-        Movement.WallSliding(input, ref velocity, ref velocityXSmoothing, wallSlideSpeedMax, ref wallSliding, wallStickTime, timeToWallUnstick, wallDirX);
-
-
+            bool wallSliding = false;
+            Movement.WallSliding(input, ref velocity, ref velocityXSmoothing, wallSlideSpeedMax, ref wallSliding, wallStickTime, timeToWallUnstick, wallDirX);
 
 
-        if (Input.GetButtonDown("Jump"))
-        {
-            Movement.JumpPlayer(ref velocity, maxJumpVelocity, minJumpVelocity, wallSliding, wallDirX, wallJumpStrong, wallJumpWeak, input);
-        }
-        if (Input.GetButtonUp("Jump"))
-        {
-            Movement.JumpPlayerRelease(ref velocity, minJumpVelocity);
-        }
 
 
-        if(Input.GetButtonDown("Possess"))
-        {
-            ChangeParent(platform);
-            velocity = new Vector3 (0,0,0);
-            gravity = 0;
+            if (Input.GetButtonDown("Jump"))
+            {
+                Movement.JumpPlayer(ref velocity, maxJumpVelocity, minJumpVelocity, wallSliding, wallDirX, wallJumpStrong, wallJumpWeak, input);
+            }
+            if (Input.GetButtonUp("Jump"))
+            {
+                Movement.JumpPlayerRelease(ref velocity, minJumpVelocity);
+            }
 
-        }
 
-        if (Input.GetButtonDown("Cancel"))
-        {
-            RevertParent();
-            gravity = -(2 * maxJumpHeight) / Mathf.Pow(timeToJumpApex, 2);
+            if (Input.GetButton("Possess"))
+            {
+            possessing = true;
+                ChangeParent(platform);
+                velocity = new Vector3(0, 0, 0);
+                gravity = 0;
 
-        }
+            }
 
-        Movement.MovePlayer(velocity * Time.deltaTime, input);
+        
+            if (Input.GetButtonDown("Cancel"))
+            {
+                RevertParent();
+                gravity = -(2 * maxJumpHeight) / Mathf.Pow(timeToJumpApex, 2);
 
-        //MovePlayer is being called by both the player and the moving platforms, so we move this above and below collision to after the movement so that we have the correct values after we move the player with our own input
-        //if you're hitting something above you or below you, velocity will change to zero.
-        Movement.GravityCollisions(ref velocity);
+            }
+        
+
+            if(!possessing)
+            Movement.MovePlayer(velocity * Time.deltaTime, input);
+
+            //MovePlayer is being called by both the player and the moving platforms, so we move this above and below collision to after the movement so that we have the correct values after we move the player with our own input
+            //if you're hitting something above you or below you, velocity will change to zero.
+            Movement.GravityCollisions(ref velocity);
+
+
+        
     }
 
 
     void ChangeParent(GameObject platform) {
-        possessing = true;
         transform.parent = platform.transform;
             transform.position = platform.transform.position;
       
