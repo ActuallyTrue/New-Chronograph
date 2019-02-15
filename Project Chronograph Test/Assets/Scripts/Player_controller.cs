@@ -35,7 +35,6 @@ public class Player_controller : MonoBehaviour
     public bool possessing;
 
 
-
     Movement2D Movement;
    //public Animator animator;
 
