@@ -15,6 +15,7 @@ public class MovingPlatform_controller : MonoBehaviour {
     int fromWaypointIndex = 0;
     float percentBetweenWaypoints;
     float nextMoveTime;
+    public Vector3 velocity;
 
     Movement2D Movement;
 
@@ -31,7 +32,7 @@ public class MovingPlatform_controller : MonoBehaviour {
 	void Update () {
         Movement.UpdateRaycastOrigins();
 
-        Vector3 velocity = Movement.CalculatePlatformMovement(speed, ref fromWaypointIndex, ref percentBetweenWaypoints, ref globalWaypoints, cyclic, ref nextMoveTime, waitTime, easeAmount);
+        velocity = Movement.CalculatePlatformMovement(speed, ref fromWaypointIndex, ref percentBetweenWaypoints, ref globalWaypoints, cyclic, ref nextMoveTime, waitTime, easeAmount);
         Movement.CalculatePassengerMovement(velocity);
         Movement.MovePassengers(true);
         Movement.MovePlatform(velocity);

@@ -32,6 +32,7 @@ public class Player_controller : MonoBehaviour
 
     bool facingRight = true;
     public GameObject platform;
+    public MovingPlatform_controller platformController;
     public bool possessing;
 
 
@@ -88,22 +89,27 @@ public class Player_controller : MonoBehaviour
             }
 
 
-            if (Input.GetButton("Possess"))
+            if (Input.GetButtonDown("Possess"))
             {
-            possessing = true;
                 ChangeParent(platform);
                 velocity = new Vector3(0, 0, 0);
                 gravity = 0;
-
+                possessing = true;
             }
 
-        
-            if (Input.GetButtonDown("Cancel"))
+            if (possessing) {
+
+            if (Input.GetButtonDown("Possess"))
             {
                 RevertParent();
                 gravity = -(2 * maxJumpHeight) / Mathf.Pow(timeToJumpApex, 2);
+                velocity = transferVelocity(platformController.velocity, velocity);
+                Debug.Log(velocity);
 
             }
+        }
+        
+            
         
 
             if(!possessing)
@@ -120,7 +126,7 @@ public class Player_controller : MonoBehaviour
 
     void ChangeParent(GameObject platform) {
         transform.parent = platform.transform;
-            transform.position = platform.transform.position;
+        transform.position = platform.transform.position;
       
 
     }
@@ -131,6 +137,12 @@ public class Player_controller : MonoBehaviour
         possessing = false;
         transform.parent = null;
 
+    }
+
+    Vector3 transferVelocity(Vector3 from, Vector3 to) {
+        to.x = 200 * from.x;
+        to.y = 200 * from.y;
+        return to;
     }
 
     void Flip()
