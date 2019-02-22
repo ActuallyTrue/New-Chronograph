@@ -18,6 +18,7 @@ public class MovingPlatform_controller : MonoBehaviour {
     public Vector3 velocity;
 
     Movement2D Movement;
+    Rigidbody2D platrb;
 
 	// Use this for initialization
 	public void Start () {
@@ -26,6 +27,7 @@ public class MovingPlatform_controller : MonoBehaviour {
         for (int i = 0; i < localWaypoints.Length; i++) {
             globalWaypoints[i] = localWaypoints[i] + transform.position;
         }
+        platrb = GetComponent<Rigidbody2D>();
     }
 	
 	// Update is called once per frame
@@ -36,6 +38,7 @@ public class MovingPlatform_controller : MonoBehaviour {
         Movement.CalculatePassengerMovement(velocity);
         Movement.MovePassengers(true);
         Movement.MovePlatform(velocity);
+        platrb.velocity = velocity;
         Movement.MovePassengers(false);
 	}
 

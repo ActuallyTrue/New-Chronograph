@@ -16,7 +16,9 @@ public class PlayerController : MonoBehaviour {
     float maxJumpVelocity;
     float minJumpVelocity;
 
+    public Rigidbody2D husk;
 
+    public float afterPossessTimer;
 
     private Vector2 input;
     private float velocityXSmoothing;
@@ -31,6 +33,8 @@ public class PlayerController : MonoBehaviour {
     public float checkRadius;
     public LayerMask whatIsGround;
     public Transform groundCheck;
+
+    private bool possessing;
 
 
 	// Use this for initialization
@@ -61,9 +65,64 @@ public class PlayerController : MonoBehaviour {
             Movement.JumpPlayerRelease(ref input, minJumpVelocity);
         }
 
-        rb.velocity = input;
+        if (Input.GetButtonDown("Possess")) {
+            rb.velocity = new Vector2(0, 0);
+            rb.isKinematic = true;
+            ChangeParent(husk);
+            possessing = true;
+        }
+
+
+        if (possessing)
+        {
+            if (Input.GetButtonDown("Cancel"))
+            {
+                RevertParent();
+                input = transferVelocity(husk, rb);
+                //rb.isKinematic = false;
+                possessing = false;
+            }
+        }
+
+        if (!possessing)
+            while(afterPossessTimer <= 0.2f) {
+                rb.isKinematic = false;
+                afterPossessTimer += Time.deltaTime;
+            }
+        if (!(afterPossessTimer <= 0.2f)){
+            rb.isKinematic = false;
+            rb.velocity = input;
+            afterPossessTimer = 0;
+        }
 
 	}
+
+
+    void ChangeParent(Rigidbody2D husk)
+    {
+        transform.parent = husk.transform;
+        transform.position = husk.transform.position;
+
+
+    }
+
+    //Revert the parent of object 2.
+    void RevertParent()
+    {
+        possessing = false;
+        transform.parent = null;
+
+    }
+
+    Vector2 transferVelocity(Rigidbody2D from, Rigidbody2D player)
+    {
+            Vector2 vFrom = from.velocity;
+            Vector2 vTo = player.velocity;
+        vTo.x = 150f * vFrom.x;
+        vTo.y = 150f * vFrom.y;
+        return vTo;
+    }
+
 
     void Flip()
     {
