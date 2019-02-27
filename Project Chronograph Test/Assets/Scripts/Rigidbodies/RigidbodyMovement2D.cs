@@ -17,20 +17,20 @@ public class RigidbodyMovement2D : MonoBehaviour {
         return Mathf.SmoothDamp(RBvelocity, targetVelocityx, ref velocityXSmoothing, isGrounded ? accelerationTimeGrounded : accelerationTimeAirborne);
     }
 
-    public void JumpPlayer(ref Vector2 input, bool isGrounded, float maxJumpVelocity )
+    public void JumpPlayer(ref Rigidbody2D player, bool isGrounded, float maxJumpVelocity )
     {
         if (isGrounded)
         {
-            input.y = maxJumpVelocity;
+            player.velocity = new Vector2(rb.velocity.x, maxJumpVelocity);
         }
 
     }
 
-    public void JumpPlayerRelease(ref Vector2 input, float minJumpVelocity)
+    public void JumpPlayerRelease(ref Rigidbody2D player, float minJumpVelocity)
     {
-        if (input.y > minJumpVelocity)
+        if (player.velocity.y > minJumpVelocity)
         {
-            input.y = minJumpVelocity;
+            player.velocity = new Vector2(rb.velocity.x, minJumpVelocity);
         }
     }
 }
