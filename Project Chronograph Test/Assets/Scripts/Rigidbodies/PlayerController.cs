@@ -11,12 +11,8 @@ public class PlayerController : MonoBehaviour {
     public float moveSpeed = 6f;
     public float dashSpeed = 10;
 
-    //these variables give a more intuitive way to assing gravity and jump velocity rather than changing them directly
-    public float maxJumpHeight = 4;
-    public float minJumpHeight = 1;
-    public float timeToJumpApex = 0.4f;
-    float maxJumpVelocity;
-    float minJumpVelocity;
+    public float maxJumpVelocity;
+    public float minJumpVelocity;
 
     bool canPossess = true;
 
@@ -26,9 +22,7 @@ public class PlayerController : MonoBehaviour {
 
     private Vector2 input;
     private float velocityXSmoothing;
-    public float accelerationTimeAirborne = .2f;
-    public float accelerationTimeGrounded = .1f;
-
+ 
     private Rigidbody2D rb;
 
     private bool facingRight = true;
@@ -39,32 +33,28 @@ public class PlayerController : MonoBehaviour {
     public Transform groundCheck;
 
     private bool possessing;
+    private bool canMove = true;
 
 
 	// Use this for initialization
 	void Start () {
         rb = GetComponent<Rigidbody2D>();
         Movement = GetComponent<RigidbodyMovement2D>();
-        //just some physics to set the gjump velocity
-        maxJumpVelocity = 20;
-        minJumpVelocity = 9.8f;
-        print("Gravity: " + rb.gravityScale + " Jump Velocity: " + maxJumpVelocity);
-
     }
 
     private void FixedUpdate()
     {
+        isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, whatIsGround);
 
         if (isGrounded) {
             canPossess = true;
         }
+        if (canMove)
+        {
+            moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
-        moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-
-        float targetVelocityx = moveInput.x * moveSpeed;
-
-        float wantedVelocity = Mathf.SmoothDamp(rb.velocity.x, targetVelocityx, ref velocityXSmoothing, isGrounded ? accelerationTimeGrounded : accelerationTimeAirborne);
-        rb.velocity = new Vector2(wantedVelocity, rb.velocity.y);
+            rb.velocity = new Vector2(moveInput.x * moveSpeed, rb.velocity.y);
+        }
 
         if (facingRight == false && moveInput.x > 0)
         {
@@ -77,10 +67,6 @@ public class PlayerController : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
-        Debug.Log(canPossess);
-
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, whatIsGround);
-
         if (Input.GetButtonDown("Jump"))
         {
             Movement.JumpPlayer(ref rb, isGrounded, maxJumpVelocity);
@@ -94,6 +80,7 @@ public class PlayerController : MonoBehaviour {
         {
             rb.isKinematic = true;
             canPossess = false;
+            canMove = false;
             if ((moveInput.x < 0.1f && moveInput.x > -0.1) && (moveInput.y < 0.1f && moveInput.y > -0.1f))
             {
                 StartCoroutine(DashRight(rb));
@@ -152,7 +139,8 @@ public class PlayerController : MonoBehaviour {
         }
         player.velocity = Vector2.zero;
         player.isKinematic = false;
-        
+        canMove = true;
+
     }
 
     IEnumerator DashUp(Rigidbody2D player)
@@ -166,7 +154,7 @@ public class PlayerController : MonoBehaviour {
         }
         player.velocity = Vector2.zero;
         player.isKinematic = false;
-
+        canMove = true;
     }
 
     IEnumerator DashUpRight(Rigidbody2D player)
@@ -182,7 +170,7 @@ public class PlayerController : MonoBehaviour {
         }
         player.velocity = Vector2.zero;
         player.isKinematic = false;
-
+        canMove = true;
     }
 
     IEnumerator DashUpLeft(Rigidbody2D player)
@@ -198,7 +186,7 @@ public class PlayerController : MonoBehaviour {
         }
         player.velocity = Vector2.zero;
         player.isKinematic = false;
-
+        canMove = true;
     }
 
     IEnumerator DashLeft(Rigidbody2D player)
@@ -212,7 +200,7 @@ public class PlayerController : MonoBehaviour {
         }
         player.velocity = Vector2.zero;
         player.isKinematic = false;
-
+        canMove = true;
     }
 
     IEnumerator DashDownLeft(Rigidbody2D player)
@@ -228,7 +216,7 @@ public class PlayerController : MonoBehaviour {
         }
         player.velocity = Vector2.zero;
         player.isKinematic = false;
-
+        canMove = true;
     }
 
     IEnumerator DashDown(Rigidbody2D player)
@@ -242,7 +230,7 @@ public class PlayerController : MonoBehaviour {
         }
         player.velocity = Vector2.zero;
         player.isKinematic = false;
-
+        canMove = true;
     }
 
     IEnumerator DashDownRight(Rigidbody2D player)
@@ -258,7 +246,7 @@ public class PlayerController : MonoBehaviour {
         }
         player.velocity = Vector2.zero;
         player.isKinematic = false;
-
+        canMove = true;
     }
 
 

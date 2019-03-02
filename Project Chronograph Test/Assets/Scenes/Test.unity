@@ -920,7 +920,7 @@ Rigidbody2D:
   m_Mass: 5
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 3
+  m_GravityScale: 3.5
   m_Material: {fileID: 6200000, guid: 05ab02488325ba043800a736e084114c, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
@@ -1031,13 +1031,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 5
   dashSpeed: 20
-  maxJumpHeight: 4
-  minJumpHeight: 1
-  timeToJumpApex: 0.4
+  maxJumpVelocity: 15
+  minJumpVelocity: 10
   husk: {fileID: 317534166}
   afterPossessTimer: 0
-  accelerationTimeAirborne: 0.2
-  accelerationTimeGrounded: 0.1
   checkRadius: 0.3
   whatIsGround:
     serializedVersion: 2
