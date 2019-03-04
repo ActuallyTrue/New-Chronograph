@@ -78,7 +78,6 @@ public class PlayerController : MonoBehaviour {
 
         if (Input.GetButtonDown("Possess") && canPossess)
         {
-            rb.isKinematic = true;
             canPossess = false;
             canMove = false;
             if ((moveInput.x < 0.1f && moveInput.x > -0.1) && (moveInput.y < 0.1f && moveInput.y > -0.1f))
@@ -138,7 +137,6 @@ public class PlayerController : MonoBehaviour {
             yield return null;
         }
         player.velocity = Vector2.zero;
-        player.isKinematic = false;
         canMove = true;
 
     }
@@ -153,7 +151,6 @@ public class PlayerController : MonoBehaviour {
             yield return null;
         }
         player.velocity = Vector2.zero;
-        player.isKinematic = false;
         canMove = true;
     }
 
@@ -169,7 +166,6 @@ public class PlayerController : MonoBehaviour {
             yield return null;
         }
         player.velocity = Vector2.zero;
-        player.isKinematic = false;
         canMove = true;
     }
 
@@ -185,7 +181,6 @@ public class PlayerController : MonoBehaviour {
             yield return null;
         }
         player.velocity = Vector2.zero;
-        player.isKinematic = false;
         canMove = true;
     }
 
@@ -199,7 +194,6 @@ public class PlayerController : MonoBehaviour {
             yield return null;
         }
         player.velocity = Vector2.zero;
-        player.isKinematic = false;
         canMove = true;
     }
 
@@ -215,7 +209,6 @@ public class PlayerController : MonoBehaviour {
             yield return null;
         }
         player.velocity = Vector2.zero;
-        player.isKinematic = false;
         canMove = true;
     }
 
@@ -229,7 +222,6 @@ public class PlayerController : MonoBehaviour {
             yield return null;
         }
         player.velocity = Vector2.zero;
-        player.isKinematic = false;
         canMove = true;
     }
 
@@ -245,7 +237,6 @@ public class PlayerController : MonoBehaviour {
             yield return null;
         }
         player.velocity = Vector2.zero;
-        player.isKinematic = false;
         canMove = true;
     }
 
