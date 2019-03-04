@@ -66,7 +66,8 @@ public class PlayerController : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update () {
+    void Update()
+    {
         if (Input.GetButtonDown("Jump"))
         {
             Movement.JumpPlayer(ref rb, isGrounded, maxJumpVelocity);
@@ -75,56 +76,58 @@ public class PlayerController : MonoBehaviour {
         {
             Movement.JumpPlayerRelease(ref rb, minJumpVelocity);
         }
-
-        if (Input.GetButtonDown("Possess") && canPossess)
-        {
-            canPossess = false;
-            canMove = false;
-            if ((moveInput.x < 0.1f && moveInput.x > -0.1) && (moveInput.y < 0.1f && moveInput.y > -0.1f))
+        if (canMove)
+        { 
+            if (Input.GetButtonDown("Possess") && canPossess)
             {
-                StartCoroutine(DashRight(rb));
+                canPossess = false;
+                canMove = false;
+                if ((moveInput.x < 0.1f && moveInput.x > -0.1) && (moveInput.y < 0.1f && moveInput.y > -0.1f))
+                {
+                    StartCoroutine(DashRight(rb));
+                }
+                if (moveInput.x > 0.1f && moveInput.y > 0.1f)
+                {
+                    //up right
+                    StartCoroutine(DashUpRight(rb));
+                }
+                if ((moveInput.x < 0.1f && moveInput.x > -0.1) && moveInput.y > 0.1f)
+                {
+                    //up
+                    StartCoroutine(DashUp(rb));
+                }
+                if (moveInput.x < -0.1f && moveInput.y > 0.1f)
+                {
+                    //up left
+                    StartCoroutine(DashUpLeft(rb));
+                }
+                if (moveInput.x > 0.1f && (moveInput.y < 0.1f && moveInput.y > -0.1f))
+                {
+                    //right
+                    StartCoroutine(DashRight(rb));
+                }
+                if (moveInput.x > 0.1f && moveInput.y < -0.1f)
+                {
+                    //down right
+                    StartCoroutine(DashDownRight(rb));
+                }
+                if ((moveInput.x < 0.1f && moveInput.x > -0.1) && moveInput.y < -0.1f)
+                {
+                    //down
+                    StartCoroutine(DashDown(rb));
+                }
+                if (moveInput.x < -0.1f && moveInput.y < -0.1f)
+                {
+                    //down left
+                    StartCoroutine(DashDownLeft(rb));
+                }
+                if (moveInput.x < -0.1f && (moveInput.y < 0.1f && moveInput.y > -0.1f))
+                {
+                    //left
+                    StartCoroutine(DashLeft(rb));
+                }
             }
-            if (moveInput.x > 0.1f && moveInput.y > 0.1f)
-            {
-                //up right
-                StartCoroutine(DashUpRight(rb));
-            }
-            if ((moveInput.x < 0.1f && moveInput.x > -0.1) && moveInput.y > 0.1f)
-            {
-                //up
-                StartCoroutine(DashUp(rb));
-            }
-            if (moveInput.x < -0.1f && moveInput.y > 0.1f)
-            {
-                //up left
-                StartCoroutine(DashUpLeft(rb));
-            }
-            if (moveInput.x > 0.1f && (moveInput.y < 0.1f && moveInput.y > -0.1f))
-            {
-                //right
-                StartCoroutine(DashRight(rb));
-            }
-            if (moveInput.x > 0.1f && moveInput.y < -0.1f)
-            {
-                //down right
-                StartCoroutine(DashDownRight(rb));
-            }
-            if ((moveInput.x < 0.1f && moveInput.x > -0.1) && moveInput.y < -0.1f)
-            {
-                //down
-                StartCoroutine(DashDown(rb));
-            }
-            if (moveInput.x < -0.1f && moveInput.y < -0.1f)
-            {
-                //down left
-                StartCoroutine(DashDownLeft(rb));
-            }
-            if (moveInput.x < -0.1f && (moveInput.y < 0.1f && moveInput.y > -0.1f))
-            {
-                //left
-                StartCoroutine(DashLeft(rb));
-            }
-        }
+    }
 
 	}
 
@@ -151,6 +154,7 @@ public class PlayerController : MonoBehaviour {
             yield return null;
         }
         player.velocity = Vector2.zero;
+        canPossess = false;
         canMove = true;
     }
 
@@ -166,6 +170,7 @@ public class PlayerController : MonoBehaviour {
             yield return null;
         }
         player.velocity = Vector2.zero;
+        canPossess = false;
         canMove = true;
     }
 
@@ -181,6 +186,7 @@ public class PlayerController : MonoBehaviour {
             yield return null;
         }
         player.velocity = Vector2.zero;
+        canPossess = false;
         canMove = true;
     }
 
