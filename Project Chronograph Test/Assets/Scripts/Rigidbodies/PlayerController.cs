@@ -5,33 +5,38 @@ using UnityEngine;
 [RequireComponent(typeof(RigidbodyMovement2D))]
 public class PlayerController : MonoBehaviour {
 
+    //master movement class
     RigidbodyMovement2D Movement;
 
+    //variables for getting input and controlling speed
     Vector2 moveInput;
     public float moveSpeed = 6f;
     public float dashSpeed = 10;
 
+    //variables for variable jump height
     public float maxJumpVelocity;
     public float minJumpVelocity;
 
+    //Boolean to decide if you can possess or not
     bool canPossess = true;
 
-    public Rigidbody2D husk;
-
-    public float afterPossessTimer;
-
-    private Vector2 input;
-    private float velocityXSmoothing;
+    //placeholder name for the variable, stands for an object that you're going to possess
+    public Rigidbody2D core;
  
+    //the player's rigidbody
     private Rigidbody2D rb;
 
+    //for turning the player around
     private bool facingRight = true;
 
+    //Everything for being grounded
     private bool isGrounded;
     public float checkRadius;
     public LayerMask whatIsGround;
     public Transform groundCheck;
 
+    //dashing, possessing, and canMove booleans for deciding if you can enter an object or not
+    private bool dashing;
     private bool possessing;
     private bool canMove = true;
 
@@ -44,18 +49,23 @@ public class PlayerController : MonoBehaviour {
 
     private void FixedUpdate()
     {
+        //checks if you're grounded
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, whatIsGround);
 
+        //canPossess acts as a dash charge, once you land it refills.
         if (isGrounded) {
             canPossess = true;
         }
         if (canMove)
         {
+            //gets horizontal and vertical input so you can move and dash in all 8 directions
             moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
+            //this line literally moves the character by changing its velocity directly
             rb.velocity = new Vector2(moveInput.x * moveSpeed, rb.velocity.y);
         }
 
+        //code that flips the character so we don't have to make animations for walking in both directions
         if (facingRight == false && moveInput.x > 0)
         {
             Flip();
@@ -68,18 +78,22 @@ public class PlayerController : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
+        //if you jump it changes your y velocity to the maxJumpVelocity
         if (Input.GetButtonDown("Jump"))
         {
             Movement.JumpPlayer(ref rb, isGrounded, maxJumpVelocity);
         }
+        //if you release jump while your y velocity is above your minJumpVelocity, your velocity gets set to your min jump velocity (variable jump height)
         if (Input.GetButtonUp("Jump"))
         {
             Movement.JumpPlayerRelease(ref rb, minJumpVelocity);
         }
         if (canMove)
         { 
+            //if you can possess then dash in whatever direction you're pressing
             if (Input.GetButtonDown("Possess") && canPossess)
             {
+                dashing = true;
                 canPossess = false;
                 canMove = false;
                 if ((moveInput.x < 0.1f && moveInput.x > -0.1) && (moveInput.y < 0.1f && moveInput.y > -0.1f))
@@ -127,11 +141,16 @@ public class PlayerController : MonoBehaviour {
                     StartCoroutine(DashLeft(rb));
                 }
             }
-    }
+            //if you're currently possessing something and you press the possess button, you pop out. (doesn't work currently, jumping out will transfer velocity, possessing out will make you dash out)
+            if (possessing && Input.GetButtonDown("Jump")) {
+                RevertParent();
+                transferVelocity(core, rb);
+            }
+        }
 
 	}
 
-
+    //A ton of coroutines with the same logic, the diagonal ones just use trig to get the right speeds to go at the desired dash speed diagonally.
     IEnumerator DashRight(Rigidbody2D player) {
         float timer = 0;
         while (timer < 0.2) {
@@ -140,6 +159,7 @@ public class PlayerController : MonoBehaviour {
             yield return null;
         }
         player.velocity = Vector2.zero;
+        dashing = false;
         canMove = true;
 
     }
@@ -155,6 +175,7 @@ public class PlayerController : MonoBehaviour {
         }
         player.velocity = Vector2.zero;
         canPossess = false;
+        dashing = false;
         canMove = true;
     }
 
@@ -171,6 +192,7 @@ public class PlayerController : MonoBehaviour {
         }
         player.velocity = Vector2.zero;
         canPossess = false;
+        dashing = false;
         canMove = true;
     }
 
@@ -187,6 +209,7 @@ public class PlayerController : MonoBehaviour {
         }
         player.velocity = Vector2.zero;
         canPossess = false;
+        dashing = false;
         canMove = true;
     }
 
@@ -200,6 +223,7 @@ public class PlayerController : MonoBehaviour {
             yield return null;
         }
         player.velocity = Vector2.zero;
+        dashing = false;
         canMove = true;
     }
 
@@ -215,6 +239,7 @@ public class PlayerController : MonoBehaviour {
             yield return null;
         }
         player.velocity = Vector2.zero;
+        dashing = false;
         canMove = true;
     }
 
@@ -228,6 +253,7 @@ public class PlayerController : MonoBehaviour {
             yield return null;
         }
         player.velocity = Vector2.zero;
+        dashing = false;
         canMove = true;
     }
 
@@ -243,14 +269,15 @@ public class PlayerController : MonoBehaviour {
             yield return null;
         }
         player.velocity = Vector2.zero;
+        dashing = false;
         canMove = true;
     }
 
-
-    void ChangeParent(Rigidbody2D husk)
+    //Changes the player's parent to whatever it's trying to possess
+    void ChangeParent(Rigidbody2D core)
     {
-        transform.parent = husk.transform;
-        transform.position = husk.transform.position;
+        transform.parent = core.transform;
+        transform.position = core.transform.position;
 
 
     }
@@ -263,6 +290,7 @@ public class PlayerController : MonoBehaviour {
 
     }
 
+    //transfers the velocity from one rigidbody to another
     Vector2 transferVelocity(Rigidbody2D from, Rigidbody2D player)
     {
             Vector2 vFrom = from.velocity;
@@ -272,7 +300,19 @@ public class PlayerController : MonoBehaviour {
         return vTo;
     }
 
+    //if you collide with a possessible object while dashing, you should go inside of it (not currently working)
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (dashing) {
+            Debug.Log("right here");
+            possessing = true;
+            core = GetComponent<Rigidbody2D>();
+            ChangeParent(core);
 
+        }
+    }
+
+    //flips the player around so we don't have to make more animations
     void Flip()
     {
 
