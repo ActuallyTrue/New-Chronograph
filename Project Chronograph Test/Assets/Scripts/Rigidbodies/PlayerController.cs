@@ -40,11 +40,19 @@ public class PlayerController : MonoBehaviour {
     private bool possessing;
     private bool canMove = true;
 
+    private float afterPossessTimer;
+
+    BoxCollider2D boxCollider;
+
+    Vector3 playerScale;
+
 
 	// Use this for initialization
 	void Start () {
         rb = GetComponent<Rigidbody2D>();
         Movement = GetComponent<RigidbodyMovement2D>();
+        boxCollider = GetComponent<BoxCollider2D>();
+        playerScale = transform.localScale;
     }
 
     private void FixedUpdate()
@@ -142,10 +150,11 @@ public class PlayerController : MonoBehaviour {
                 }
             }
             //if you're currently possessing something and you press the possess button, you pop out. (doesn't work currently, jumping out will transfer velocity, possessing out will make you dash out)
-            if (possessing && Input.GetButtonDown("Jump")) {
+            if (possessing && Input.GetButtonDown("Cancel")) {
                 RevertParent();
-                transferVelocity(core, rb);
+                rb.velocity = transferVelocity(core, rb);
             }
+
         }
 
 	}
@@ -276,6 +285,8 @@ public class PlayerController : MonoBehaviour {
     //Changes the player's parent to whatever it's trying to possess
     void ChangeParent(Rigidbody2D core)
     {
+        boxCollider.enabled = false;
+        rb.isKinematic = true;
         transform.parent = core.transform;
         transform.position = core.transform.position;
 
@@ -287,16 +298,34 @@ public class PlayerController : MonoBehaviour {
     {
         possessing = false;
         transform.parent = null;
+        rb.isKinematic = false;
+        boxCollider.enabled = true;
+        transform.localScale = playerScale;
+        transform.rotation = Quaternion.Euler(0,0,0);
 
     }
 
     //transfers the velocity from one rigidbody to another
     Vector2 transferVelocity(Rigidbody2D from, Rigidbody2D player)
     {
-            Vector2 vFrom = from.velocity;
-            Vector2 vTo = player.velocity;
+       Vector2 vFrom = from.velocity;
+       Vector2 vTo = player.velocity;
+       vTo.x = 150f * vFrom.x;
+       vTo.y = 150f * vFrom.y;
+        Debug.Log(vTo + " Given");
+        return vTo;
+    }
+
+    Vector2 transferVelocityPendulums(Rigidbody2D from, Rigidbody2D player)
+    {
+        
+        float vFromAV = from.angularVelocity;
+        float vFromLV = vFromAV*(Mathf.PI * 3) / 180;
+        Vector2 vFrom = new Vector2(vFromLV*Mathf.Cos(from.rotation * Mathf.Deg2Rad), vFromLV * Mathf.Sin(from.rotation * Mathf.Deg2Rad));
+        Vector2 vTo = player.velocity;
         vTo.x = 150f * vFrom.x;
         vTo.y = 150f * vFrom.y;
+        Debug.Log(vTo + " Given");
         return vTo;
     }
 
@@ -306,7 +335,8 @@ public class PlayerController : MonoBehaviour {
         if (dashing) {
             Debug.Log("right here");
             possessing = true;
-            core = GetComponent<Rigidbody2D>();
+            core = collision.rigidbody;
+            Debug.Log(core);
             ChangeParent(core);
 
         }
