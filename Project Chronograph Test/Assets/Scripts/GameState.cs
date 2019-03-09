@@ -54,7 +54,6 @@ public class GameState : MonoBehaviour {
                     Debug.Log("Switching to \"script\"");
                 }
                 break;
-                break;
             case GameStates.menu:
                 //The menu is open
                 //Toggle buttons and animations
@@ -81,6 +80,7 @@ public class GameState : MonoBehaviour {
                 break;
             case GameStates.scene:
                 //The game is in a cutscene
+                //Play presentation
                 if (Input.GetKeyDown(KeyCode.Return))
                 {
                     Debug.Log("Game state in \"scene\"");
