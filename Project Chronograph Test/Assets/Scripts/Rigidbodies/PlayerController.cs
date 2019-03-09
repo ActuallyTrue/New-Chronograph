@@ -310,8 +310,8 @@ public class PlayerController : MonoBehaviour {
     {
        Vector2 vFrom = from.velocity;
        Vector2 vTo = player.velocity;
-       vTo.x = 150f * vFrom.x;
-       vTo.y = 150f * vFrom.y;
+       vTo.x = 2f * vFrom.x;
+       vTo.y = 2f * vFrom.y;
         Debug.Log(vTo + " Given");
         return vTo;
     }
