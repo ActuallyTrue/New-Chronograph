@@ -46,64 +46,150 @@ public class PlayerController : MonoBehaviour {
 
     Vector3 playerScale;
 
+    public enum PlayerStates
+    {
+        Idle = 0,
+        Moving = 1,
+        JumpingUp = 2,
+        Falling = 3,
+        DashStartUp = 4,
+        Dashing = 5,
+        Possesing = 6
+    }
 
-	// Use this for initialization
-	void Start () {
+    public PlayerStates currentState;
+
+
+    // Use this for initialization
+    void Start () {
         rb = GetComponent<Rigidbody2D>();
         Movement = GetComponent<RigidbodyMovement2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         playerScale = transform.localScale;
     }
 
+
     private void FixedUpdate()
     {
-        //checks if you're grounded
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, whatIsGround);
-
-        //canPossess acts as a dash charge, once you land it refills.
-        if (isGrounded) {
-            canPossess = true;
-        }
-        if (canMove && !possessing)
+       
+        if (currentState == PlayerStates.Idle || currentState == PlayerStates.Moving || currentState == PlayerStates.JumpingUp || currentState == PlayerStates.Falling)
         {
-            //gets horizontal and vertical input so you can move and dash in all 8 directions
-            moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-
             //this line literally moves the character by changing its velocity directly
             rb.velocity = new Vector2(moveInput.x * moveSpeed, rb.velocity.y);
+
+            //code that flips the character so we don't have to make animations for walking in both directions
+            if (facingRight == false && moveInput.x > 0)
+            {
+                Flip();
+            }
+            else if (facingRight == true && moveInput.x < 0)
+            {
+                Flip();
+            }
         }
 
-        //code that flips the character so we don't have to make animations for walking in both directions
-        if (facingRight == false && moveInput.x > 0)
-        {
-            Flip();
-        }
-        else if (facingRight == true && moveInput.x < 0) {
-            Flip();
-        }
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        //if you jump it changes your y velocity to the maxJumpVelocity
-        if (Input.GetButtonDown("Jump"))
+        Debug.Log(currentState);
+        //checks if you're grounded
+        isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, whatIsGround);
+
+        //canPossess acts as a dash charge, once you land it refills.
+        if (isGrounded)
         {
-            Movement.JumpPlayer(ref rb, isGrounded, maxJumpVelocity);
+            canPossess = true;
         }
-        //if you release jump while your y velocity is above your minJumpVelocity, your velocity gets set to your min jump velocity (variable jump height)
-        if (Input.GetButtonUp("Jump"))
+        //gets horizontal and vertical input so you can move and dash in all 8 directions
+        moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+
+        switch (currentState)
         {
-            Movement.JumpPlayerRelease(ref rb, minJumpVelocity);
-        }
-        if (canMove)
-        { 
-            //if you can possess then dash in whatever direction you're pressing
-            if (Input.GetButtonDown("Possess") && canPossess)
-            {
-                dashing = true;
-                canPossess = false;
-                canMove = false;
+            case PlayerStates.Idle:
+                if (moveInput.x > 0 || moveInput.x < 0)
+                {
+                    currentState = PlayerStates.Moving;
+                }
+                if (Input.GetButtonDown("Jump")) {
+                    currentState = PlayerStates.JumpingUp;
+                }
+                //if you can possess then dash in whatever direction you're pressing
+                if (Input.GetButtonDown("Possess") && canPossess)
+                {
+                    dashing = true;
+                    canPossess = false;
+                    canMove = false;
+                    currentState = PlayerStates.DashStartUp;
+                }
+                if (!isGrounded)
+                {
+                    currentState = PlayerStates.Falling;
+                }
+
+                break;
+            case PlayerStates.Moving:
+
+                if (moveInput.x < 0.01f && moveInput.x > -0.01f) {
+                    currentState = PlayerStates.Idle;
+                }
+                if (Input.GetButtonDown("Jump"))
+                {
+                    currentState = PlayerStates.JumpingUp;
+                }
+
+                //if you can possess then dash in whatever direction you're pressing
+                if (Input.GetButtonDown("Possess") && canPossess)
+                {
+                    dashing = true;
+                    canPossess = false;
+                    canMove = false;
+                    currentState = PlayerStates.DashStartUp;
+                }
+
+                break;
+            case PlayerStates.JumpingUp:
+                //if you jump it changes your y velocity to the maxJumpVelocity
+                Movement.JumpPlayer(ref rb, isGrounded, maxJumpVelocity);
+
+                //if you release jump while your y velocity is above your minJumpVelocity, your velocity gets set to your min jump velocity (variable jump height)
+                if (Input.GetButtonUp("Jump"))
+                {
+                    Movement.JumpPlayerRelease(ref rb, minJumpVelocity);
+                    currentState = PlayerStates.Falling;
+                }
+
+                //if you can possess then dash in whatever direction you're pressing
+                if (Input.GetButtonDown("Possess") && canPossess)
+                {
+                    dashing = true;
+                    canPossess = false;
+                    canMove = false;
+                    currentState = PlayerStates.DashStartUp;
+                }
+
+                if (rb.velocity.y <= 0) {
+                    currentState = PlayerStates.Falling;
+                }
+
+                break;
+            case PlayerStates.Falling:
+                if (isGrounded == true) {
+                    currentState = PlayerStates.Idle;
+                }
+                //if you can possess then dash in whatever direction you're pressing
+                if (Input.GetButtonDown("Possess") && canPossess)
+                {
+                    dashing = true;
+                    canPossess = false;
+                    canMove = false;
+                    currentState = PlayerStates.DashStartUp;
+                }
+            
+                break;
+            case PlayerStates.DashStartUp:
                 if ((moveInput.x < 0.1f && moveInput.x > -0.1) && (moveInput.y < 0.1f && moveInput.y > -0.1f))
                 {
                     StartCoroutine(DashRight(rb));
@@ -148,19 +234,30 @@ public class PlayerController : MonoBehaviour {
                     //left
                     StartCoroutine(DashLeft(rb));
                 }
-            }
-            //if you're currently possessing something and you press the possess button, you pop out. (doesn't work currently, jumping out will transfer velocity, possessing out will make you dash out)
-            if (possessing && Input.GetButtonDown("Cancel")) {
-                RevertParent();
-                rb.velocity = transferVelocity(core, rb);
-            }
-
+                break;
+            case PlayerStates.Dashing:
+                //if you're currently possessing something and you press the possess button, you pop out. (doesn't work currently, jumping out will transfer velocity, possessing out will make you dash out)
+                if (!dashing)
+                {
+                    currentState = PlayerStates.Falling;
+                }
+                break;
+            case PlayerStates.Possesing:
+                //if you're currently possessing something and you press the possess button, you pop out. (doesn't work currently, jumping out will transfer velocity, possessing out will make you dash out)
+                if (possessing && Input.GetButtonDown("Cancel"))
+                {
+                    RevertParent();
+                    rb.velocity = transferVelocity(core, rb);
+                    currentState = PlayerStates.Falling;
+                }
+                break;
         }
 
 	}
 
     //A ton of coroutines with the same logic, the diagonal ones just use trig to get the right speeds to go at the desired dash speed diagonally.
     IEnumerator DashRight(Rigidbody2D player) {
+        currentState = PlayerStates.Dashing;
         float timer = 0;
         while (timer < 0.2) {
             player.velocity = new Vector2(dashSpeed, 0);
@@ -170,11 +267,11 @@ public class PlayerController : MonoBehaviour {
         player.velocity = Vector2.zero;
         dashing = false;
         canMove = true;
-
     }
 
     IEnumerator DashUp(Rigidbody2D player)
     {
+        currentState = PlayerStates.Dashing;
         float timer = 0;
         while (timer < 0.2)
         {
@@ -190,6 +287,7 @@ public class PlayerController : MonoBehaviour {
 
     IEnumerator DashUpRight(Rigidbody2D player)
     {
+        currentState = PlayerStates.Dashing;
         float timer = 0;
         float dashSpeedX = dashSpeed * Mathf.Cos(Mathf.PI / 4);
         float dashSpeedY = dashSpeed * Mathf.Sin(Mathf.PI / 4);
@@ -207,6 +305,7 @@ public class PlayerController : MonoBehaviour {
 
     IEnumerator DashUpLeft(Rigidbody2D player)
     {
+        currentState = PlayerStates.Dashing;
         float timer = 0;
         float dashSpeedX = dashSpeed * Mathf.Cos(Mathf.PI / 4);
         float dashSpeedY = dashSpeed * Mathf.Sin(Mathf.PI / 4);
@@ -224,6 +323,7 @@ public class PlayerController : MonoBehaviour {
 
     IEnumerator DashLeft(Rigidbody2D player)
     {
+        currentState = PlayerStates.Dashing;
         float timer = 0;
         while (timer < 0.2)
         {
@@ -238,6 +338,7 @@ public class PlayerController : MonoBehaviour {
 
     IEnumerator DashDownLeft(Rigidbody2D player)
     {
+        currentState = PlayerStates.Dashing;
         float timer = 0;
         float dashSpeedX = dashSpeed * Mathf.Cos(Mathf.PI / 4);
         float dashSpeedY = dashSpeed * Mathf.Sin(Mathf.PI / 4);
@@ -254,6 +355,7 @@ public class PlayerController : MonoBehaviour {
 
     IEnumerator DashDown(Rigidbody2D player)
     {
+        currentState = PlayerStates.Dashing;
         float timer = 0;
         while (timer < 0.2)
         {
@@ -268,6 +370,7 @@ public class PlayerController : MonoBehaviour {
 
     IEnumerator DashDownRight(Rigidbody2D player)
     {
+        currentState = PlayerStates.Dashing;
         float timer = 0;
         float dashSpeedX = dashSpeed * Mathf.Cos(Mathf.PI / 4);
         float dashSpeedY = dashSpeed * Mathf.Sin(Mathf.PI / 4);
@@ -340,6 +443,7 @@ public class PlayerController : MonoBehaviour {
             core = collision.rigidbody;
             Debug.Log(core);
             ChangeParent(core);
+            currentState = PlayerStates.Possesing;
 
         }
     }
