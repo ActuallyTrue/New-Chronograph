@@ -64,7 +64,7 @@ public class PlayerController : MonoBehaviour {
         if (isGrounded) {
             canPossess = true;
         }
-        if (canMove)
+        if (canMove && !possessing)
         {
             //gets horizontal and vertical input so you can move and dash in all 8 directions
             moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
@@ -285,11 +285,11 @@ public class PlayerController : MonoBehaviour {
     //Changes the player's parent to whatever it's trying to possess
     void ChangeParent(Rigidbody2D core)
     {
+        canMove = false;
         boxCollider.enabled = false;
         rb.isKinematic = true;
         transform.parent = core.transform;
         transform.position = core.transform.position;
-
 
     }
 
@@ -302,6 +302,7 @@ public class PlayerController : MonoBehaviour {
         boxCollider.enabled = true;
         transform.localScale = playerScale;
         transform.rotation = Quaternion.Euler(0,0,0);
+        canMove = true;
 
     }
 
@@ -310,8 +311,8 @@ public class PlayerController : MonoBehaviour {
     {
        Vector2 vFrom = from.velocity;
        Vector2 vTo = player.velocity;
-       vTo.x = 2f * vFrom.x;
-       vTo.y = 2f * vFrom.y;
+       vTo.x = 20f * vFrom.x;
+       vTo.y = 20f * vFrom.y;
         Debug.Log(vTo + " Given");
         return vTo;
     }
@@ -333,6 +334,7 @@ public class PlayerController : MonoBehaviour {
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (dashing) {
+            canMove = false;
             Debug.Log("right here");
             possessing = true;
             core = collision.rigidbody;
