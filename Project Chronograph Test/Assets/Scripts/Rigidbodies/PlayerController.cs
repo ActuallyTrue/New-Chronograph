@@ -440,6 +440,7 @@ public class PlayerController : MonoBehaviour {
             canMove = false;
             Debug.Log("right here");
             possessing = true;
+            dashing = false;
             core = collision.rigidbody;
             Debug.Log(core);
             ChangeParent(core);
