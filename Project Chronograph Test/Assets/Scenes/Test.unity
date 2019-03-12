@@ -241,7 +241,7 @@ GameObject:
   m_Component:
   - component: {fileID: 236084728}
   - component: {fileID: 236084729}
-  m_Layer: 8
+  m_Layer: 11
   m_Name: CollideWithPlayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -300,7 +300,7 @@ GameObject:
   - component: {fileID: 317534161}
   - component: {fileID: 317534160}
   - component: {fileID: 317534166}
-  m_Layer: 8
+  m_Layer: 11
   m_Name: Moving Platform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -426,8 +426,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 6.35, y: -0.36, z: -0.08667828}
   m_LocalScale: {x: 5.53724, y: 0.445, z: 1}
-  m_Children:
-  - {fileID: 1279055446}
+  m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -599,7 +598,7 @@ GameObject:
   - component: {fileID: 1278249539}
   - component: {fileID: 1278249540}
   - component: {fileID: 1278249538}
-  m_Layer: 4
+  m_Layer: 11
   m_Name: Pendulum1 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -745,34 +744,6 @@ MonoBehaviour:
   rightPushRange: 0
   velocityThreshold: 6
   previousVelocity: {x: 0, y: 0}
---- !u!1 &1279055445
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1279055446}
-  m_Layer: 8
-  m_Name: TpPosition
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1279055446
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1279055445}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 317534165}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1389874873
 GameObject:
   m_ObjectHideFlags: 0
@@ -785,7 +756,7 @@ GameObject:
   - component: {fileID: 1389874876}
   - component: {fileID: 1389874875}
   - component: {fileID: 1389874874}
-  m_Layer: 8
+  m_Layer: 11
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1142,7 +1113,7 @@ MonoBehaviour:
   checkRadius: 0.3
   whatIsGround:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 2304
   groundCheck: {fileID: 319579908}
   currentState: 0
 --- !u!1 &1495246996
@@ -1155,7 +1126,7 @@ GameObject:
   - component: {fileID: 1495246997}
   - component: {fileID: 1495246999}
   - component: {fileID: 1495246998}
-  m_Layer: 4
+  m_Layer: 11
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
