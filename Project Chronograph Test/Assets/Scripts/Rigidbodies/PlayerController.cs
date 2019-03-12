@@ -433,21 +433,34 @@ public class PlayerController : MonoBehaviour {
         return vTo;
     }
 
-    //if you collide with a possessible object while dashing, you should go inside of it (not currently working)
+    //this is how we will get control of another object's scrip from a collision
+    //void OnCollisionEnter(Collision other)
+    //{
+    //    if (other.gameObject.tag == "AI Skelly Prefab")
+    //        other.gameObject.GetComponent<AIHealth>().CurrentHealth -= damage;
+    //}
+
+    //if you collide with a possessible object while dashing, you should go inside of it
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (dashing) {
-            canMove = false;
-            Debug.Log("right here");
-            possessing = true;
-            dashing = false;
-            core = collision.rigidbody;
-            Debug.Log(core);
-            ChangeParent(core);
-            currentState = PlayerStates.Possesing;
+            if (collision.gameObject.layer == 11) //Layer 11 is for cores that you can physically collide with
+            {
+                canMove = false;
+                Debug.Log("right here");
+                possessing = true;
+                dashing = false;
+                core = collision.rigidbody;
+                Debug.Log(core);
+                ChangeParent(core);
+                currentState = PlayerStates.Possesing;
+            }
 
         }
     }
+
+
+   
 
     //flips the player around so we don't have to make more animations
     void Flip()
