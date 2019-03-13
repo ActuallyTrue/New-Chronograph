@@ -46,6 +46,9 @@ public class PlayerController : MonoBehaviour {
 
     Vector3 playerScale;
 
+    CoreAnimator coreanim;
+    GameObject nonCollideCore;
+
     public enum PlayerStates
     {
         Idle = 0,
@@ -94,7 +97,7 @@ public class PlayerController : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        Debug.Log(currentState);
+        //Debug.Log(currentState);
         //checks if you're grounded
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, whatIsGround);
 
@@ -396,6 +399,16 @@ public class PlayerController : MonoBehaviour {
 
     }
 
+    void NonCollideChangeParent(GameObject core)
+    {
+        canMove = false;
+        boxCollider.enabled = false;
+        rb.isKinematic = true;
+        transform.parent = core.transform;
+        transform.position = core.transform.position;
+
+    }
+
     //Revert the parent of object 2.
     void RevertParent()
     {
@@ -459,8 +472,27 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (dashing)
+        {
+            if (other.gameObject.layer == 10) //Layer 10 is for cores that you can't physically collide with
+            {
+                canMove = false;
+                Debug.Log("right here");
+                possessing = true;
+                dashing = false;
+                coreanim = other.gameObject.GetComponent<CoreAnimator>();
+                nonCollideCore = other.gameObject;
+                NonCollideChangeParent(nonCollideCore);
+                currentState = PlayerStates.Possesing;
+            }
 
-   
+        }
+    }
+
+
+
 
     //flips the player around so we don't have to make more animations
     void Flip()
