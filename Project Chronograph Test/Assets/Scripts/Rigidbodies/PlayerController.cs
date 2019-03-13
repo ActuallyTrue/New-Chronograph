@@ -57,7 +57,9 @@ public class PlayerController : MonoBehaviour {
         Falling = 3,
         DashStartUp = 4,
         Dashing = 5,
-        Possesing = 6
+        PossessingCollide = 6,
+        PossessingNonCollide = 7
+
     }
 
     public PlayerStates currentState;
@@ -245,12 +247,21 @@ public class PlayerController : MonoBehaviour {
                     currentState = PlayerStates.Falling;
                 }
                 break;
-            case PlayerStates.Possesing:
+            case PlayerStates.PossessingCollide:
                 //if you're currently possessing something and you press the possess button, you pop out. (doesn't work currently, jumping out will transfer velocity, possessing out will make you dash out)
                 if (possessing && Input.GetButtonDown("Cancel"))
                 {
                     RevertParent();
                     rb.velocity = transferVelocity(core, rb);
+                    currentState = PlayerStates.Falling;
+                }
+                break;
+            case PlayerStates.PossessingNonCollide:
+                //if you're currently possessing something and you press the possess button, you pop out. (doesn't work currently, jumping out will transfer velocity, possessing out will make you dash out)
+                if (possessing && Input.GetButtonDown("Cancel"))
+                {
+                    RevertParent();
+                    //rb.velocity = transferVelocity(core, rb);
                     currentState = PlayerStates.Falling;
                 }
                 break;
@@ -262,7 +273,7 @@ public class PlayerController : MonoBehaviour {
     IEnumerator DashRight(Rigidbody2D player) {
         currentState = PlayerStates.Dashing;
         float timer = 0;
-        while (timer < 0.2) {
+        while (timer < 0.2 && dashing) {
             player.velocity = new Vector2(dashSpeed, 0);
             timer += Time.deltaTime;
             yield return null;
@@ -276,7 +287,7 @@ public class PlayerController : MonoBehaviour {
     {
         currentState = PlayerStates.Dashing;
         float timer = 0;
-        while (timer < 0.2)
+        while (timer < 0.2 && dashing)
         {
             player.velocity = new Vector2(0, dashSpeed);
             timer += Time.deltaTime;
@@ -294,7 +305,7 @@ public class PlayerController : MonoBehaviour {
         float timer = 0;
         float dashSpeedX = dashSpeed * Mathf.Cos(Mathf.PI / 4);
         float dashSpeedY = dashSpeed * Mathf.Sin(Mathf.PI / 4);
-        while (timer < 0.2)
+        while (timer < 0.2 && dashing)
         {
             player.velocity = new Vector2(dashSpeedX, dashSpeedY);
             timer += Time.deltaTime;
@@ -312,7 +323,7 @@ public class PlayerController : MonoBehaviour {
         float timer = 0;
         float dashSpeedX = dashSpeed * Mathf.Cos(Mathf.PI / 4);
         float dashSpeedY = dashSpeed * Mathf.Sin(Mathf.PI / 4);
-        while (timer < 0.2)
+        while (timer < 0.2 && dashing)
         {
             player.velocity = new Vector2(-dashSpeedX, dashSpeedY);
             timer += Time.deltaTime;
@@ -328,7 +339,7 @@ public class PlayerController : MonoBehaviour {
     {
         currentState = PlayerStates.Dashing;
         float timer = 0;
-        while (timer < 0.2)
+        while (timer < 0.2 && dashing)
         {
             player.velocity = new Vector2(-dashSpeed, 0);
             timer += Time.deltaTime;
@@ -345,7 +356,7 @@ public class PlayerController : MonoBehaviour {
         float timer = 0;
         float dashSpeedX = dashSpeed * Mathf.Cos(Mathf.PI / 4);
         float dashSpeedY = dashSpeed * Mathf.Sin(Mathf.PI / 4);
-        while (timer < 0.2)
+        while (timer < 0.2 && dashing)
         {
             player.velocity = new Vector2(-dashSpeedX, -dashSpeedY);
             timer += Time.deltaTime;
@@ -360,7 +371,7 @@ public class PlayerController : MonoBehaviour {
     {
         currentState = PlayerStates.Dashing;
         float timer = 0;
-        while (timer < 0.2)
+        while (timer < 0.2 && dashing)
         {
             player.velocity = new Vector2(0, -dashSpeed);
             timer += Time.deltaTime;
@@ -377,7 +388,7 @@ public class PlayerController : MonoBehaviour {
         float timer = 0;
         float dashSpeedX = dashSpeed * Mathf.Cos(Mathf.PI / 4);
         float dashSpeedY = dashSpeed * Mathf.Sin(Mathf.PI / 4);
-        while (timer < 0.2)
+        while (timer < 0.2 && dashing)
         {
             player.velocity = new Vector2(dashSpeedX, -dashSpeedY);
             timer += Time.deltaTime;
@@ -396,7 +407,6 @@ public class PlayerController : MonoBehaviour {
         rb.isKinematic = true;
         transform.parent = core.transform;
         transform.position = core.transform.position;
-
     }
 
     void NonCollideChangeParent(GameObject core)
@@ -406,7 +416,6 @@ public class PlayerController : MonoBehaviour {
         rb.isKinematic = true;
         transform.parent = core.transform;
         transform.position = core.transform.position;
-
     }
 
     //Revert the parent of object 2.
@@ -422,6 +431,7 @@ public class PlayerController : MonoBehaviour {
 
     }
 
+
     //transfers the velocity from one rigidbody to another
     Vector2 transferVelocity(Rigidbody2D from, Rigidbody2D player)
     {
@@ -433,18 +443,7 @@ public class PlayerController : MonoBehaviour {
         return vTo;
     }
 
-    Vector2 transferVelocityPendulums(Rigidbody2D from, Rigidbody2D player)
-    {
-        
-        float vFromAV = from.angularVelocity;
-        float vFromLV = vFromAV*(Mathf.PI * 3) / 180;
-        Vector2 vFrom = new Vector2(vFromLV*Mathf.Cos(from.rotation * Mathf.Deg2Rad), vFromLV * Mathf.Sin(from.rotation * Mathf.Deg2Rad));
-        Vector2 vTo = player.velocity;
-        vTo.x = 150f * vFrom.x;
-        vTo.y = 150f * vFrom.y;
-        Debug.Log(vTo + " Given");
-        return vTo;
-    }
+ 
 
     //this is how we will get control of another object's scrip from a collision
     //void OnCollisionEnter(Collision other)
@@ -466,32 +465,30 @@ public class PlayerController : MonoBehaviour {
                 core = collision.rigidbody;
                 Debug.Log(core);
                 ChangeParent(core);
-                currentState = PlayerStates.Possesing;
+                currentState = PlayerStates.PossessingCollide;
             }
 
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         if (dashing)
         {
-            if (other.gameObject.layer == 10) //Layer 10 is for cores that you can't physically collide with
+            Debug.Log("It's Happening!!!");
+            if (collision.gameObject.layer == 10) //Layer 10 is for cores that you can't physically collide with
             {
                 canMove = false;
-                Debug.Log("right here");
                 possessing = true;
                 dashing = false;
-                coreanim = other.gameObject.GetComponent<CoreAnimator>();
-                nonCollideCore = other.gameObject;
+                coreanim = collision.gameObject.GetComponent<CoreAnimator>();
+                nonCollideCore = collision.gameObject;
                 NonCollideChangeParent(nonCollideCore);
-                currentState = PlayerStates.Possesing;
+                currentState = PlayerStates.PossessingNonCollide;
             }
 
         }
     }
-
-
 
 
     //flips the player around so we don't have to make more animations
