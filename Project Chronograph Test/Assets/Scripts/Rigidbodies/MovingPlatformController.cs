@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Movement2D))]
-public class MovingPlatform_controller : MonoBehaviour {
+[RequireComponent(typeof(RigidbodyMovement2D))]
+public class MovingPlatformController : MonoBehaviour {
     //MAKE SURE TO SET THE PASSENGERMASK TO WHATEVER YOU WANNA MOVE 13:51
     public Vector3[] localWaypoints;
     Vector3[] globalWaypoints;
@@ -15,45 +15,32 @@ public class MovingPlatform_controller : MonoBehaviour {
     int fromWaypointIndex = 0;
     float percentBetweenWaypoints;
     float nextMoveTime;
-    public Vector3 velocity;
-    private Vector3 oldPoint;
-    private Vector3 currentPoint;
-    public float currentXVelocity;
-    public float currentYVelocity;
+    private Vector2 pointToMoveTo;
 
-    Movement2D Movement;
+    RigidbodyMovement2D Movement;
     Rigidbody2D platrb;
 
-	// Use this for initialization
-	public void Start () {
-        oldPoint = transform.position;
-        Movement = GetComponent<Movement2D>();
+    // Use this for initialization
+    public void Start()
+    {
+        Movement = GetComponent<RigidbodyMovement2D>();
         globalWaypoints = new Vector3[localWaypoints.Length];
-        for (int i = 0; i < localWaypoints.Length; i++) {
+        for (int i = 0; i < localWaypoints.Length; i++)
+        {
             globalWaypoints[i] = localWaypoints[i] + transform.position;
         }
-        //platrb = GetComponent<Rigidbody2D>();
-    }
-	
-	// Update is called once per frame
-	void Update () {
-        currentPoint = transform.position;
-        currentXVelocity = (transform.position.x - oldPoint.x) / Time.deltaTime;
-        currentYVelocity = (transform.position.y - oldPoint.y) / Time.deltaTime;
-        Movement.UpdateRaycastOrigins();
-
-        velocity = Movement.CalculatePlatformMovement(speed, ref fromWaypointIndex, ref percentBetweenWaypoints, ref globalWaypoints, cyclic, ref nextMoveTime, waitTime, easeAmount);
-        Movement.CalculatePassengerMovement(velocity);
-        Movement.MovePassengers(true);
-        Movement.MovePlatform(velocity);
-        Movement.MovePassengers(false);
-        oldPoint = currentPoint;
+        platrb = GetComponent<Rigidbody2D>();
     }
 
-    Vector3 GiveOldPosition(Vector3 position) {
+    // Update is called once per frame
+    void FixedUpdate()
+    {
 
-        return position;
+        pointToMoveTo = Movement.CalculatePlatformMovement(speed, ref fromWaypointIndex, ref percentBetweenWaypoints, ref globalWaypoints, cyclic, ref nextMoveTime, waitTime, easeAmount);
+        Movement.MovePlatform(platrb, pointToMoveTo);
     }
+
+
 
     public void OnDrawGizmos()
     {

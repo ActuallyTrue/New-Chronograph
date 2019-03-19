@@ -302,7 +302,7 @@ GameObject:
   - component: {fileID: 317534166}
   m_Layer: 11
   m_Name: Moving Platform
-  m_TagString: Untagged
+  m_TagString: Platform
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -323,7 +323,7 @@ MonoBehaviour:
     m_Bits: 0
   passengerMask:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 0
   horizontalRayCount: 0
   verticalRayCount: 0
   maxSlopeAngle: 80
@@ -343,13 +343,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   localWaypoints:
-  - {x: 0, y: 2.42, z: 0}
+  - {x: 0, y: 3.62, z: 0}
   - {x: 0, y: 0, z: 0}
-  speed: 6
+  speed: 4.08
   cyclic: 1
   waitTime: 0
   easeAmount: 0
   velocity: {x: 0, y: 0, z: 0}
+  currentXVelocity: 0
+  currentYVelocity: 0
 --- !u!61 &317534162
 BoxCollider2D:
   m_ObjectHideFlags: 0

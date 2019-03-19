@@ -48,6 +48,7 @@ public class PlayerController : MonoBehaviour {
 
     CoreAnimator coreanim;
     GameObject nonCollideCore;
+    MovingPlatform_controller PlatformController;
 
     public enum PlayerStates
     {
@@ -252,7 +253,7 @@ public class PlayerController : MonoBehaviour {
                 if (possessing && Input.GetButtonDown("Cancel"))
                 {
                     RevertParent();
-                    rb.velocity = transferVelocity(core, rb);
+                    rb.velocity = TransferVelocity(core, rb);
                     currentState = PlayerStates.Falling;
                 }
                 break;
@@ -433,9 +434,12 @@ public class PlayerController : MonoBehaviour {
 
 
     //transfers the velocity from one rigidbody to another
-    Vector2 transferVelocity(Rigidbody2D from, Rigidbody2D player)
+    Vector2 TransferVelocity(Rigidbody2D from, Rigidbody2D player)
     {
-       Vector2 vFrom = from.velocity;
+       if(from.gameObject.tag == "Platform") {
+            return TransferVelocityFromPlatform(from, player);
+       }
+        Vector2 vFrom = from.velocity;
        Vector2 vTo = player.velocity;
        vTo.x = 20f * vFrom.x;
        vTo.y = 20f * vFrom.y;
@@ -443,7 +447,18 @@ public class PlayerController : MonoBehaviour {
         return vTo;
     }
 
- 
+    Vector2 TransferVelocityFromPlatform(Rigidbody2D from, Rigidbody2D player)
+    {
+        PlatformController = from.gameObject.GetComponent<MovingPlatform_controller>();
+        Vector2 vFrom = new Vector2(PlatformController.currentXVelocity, PlatformController.currentYVelocity);
+        Vector2 vTo = player.velocity;
+        vTo.x = 10f * vFrom.x;
+        vTo.y = 10f * vFrom.y;
+        Debug.Log(vTo + " Given");
+        return vTo;
+    }
+
+
 
     //this is how we will get control of another object's scrip from a collision
     //void OnCollisionEnter(Collision other)
@@ -467,8 +482,19 @@ public class PlayerController : MonoBehaviour {
                 ChangeParent(core);
                 currentState = PlayerStates.PossessingCollide;
             }
+        }
+
+        if (collision.gameObject.tag == "Platform")
+        {
+
+            transform.parent = collision.transform;
 
         }
+    }
+
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        transform.parent = null;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
