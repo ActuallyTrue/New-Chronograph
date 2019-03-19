@@ -35,12 +35,23 @@ public class PlayerController : MonoBehaviour {
     public LayerMask whatIsGround;
     public Transform groundCheck;
 
+    //Everything for Wall Jumping
+    private bool touchingRightWall;
+    private bool touchingLeftWall;
+    public LayerMask whatIsWall;
+    public Transform rightWallCheck;
+    public Transform leftWallCheck;
+    private Transform wallCheckChanger;
+    public float wallSlideDrag;
+
+
+
+
     //dashing, possessing, and canMove booleans for deciding if you can enter an object or not
     private bool dashing;
     private bool possessing;
     private bool canMove = true;
 
-    private float afterPossessTimer;
 
     BoxCollider2D boxCollider;
 
@@ -59,7 +70,8 @@ public class PlayerController : MonoBehaviour {
         DashStartUp = 4,
         Dashing = 5,
         PossessingCollide = 6,
-        PossessingNonCollide = 7
+        PossessingNonCollide = 7,
+        WallSliding = 8
 
     }
 
@@ -100,9 +112,13 @@ public class PlayerController : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        //Debug.Log(currentState);
         //checks if you're grounded
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, whatIsGround);
+
+        touchingRightWall = Physics2D.OverlapCircle(rightWallCheck.position, checkRadius, whatIsWall);
+
+        touchingLeftWall = Physics2D.OverlapCircle(leftWallCheck.position, checkRadius, whatIsWall);
+
 
         //canPossess acts as a dash charge, once you land it refills.
         if (isGrounded)
@@ -111,6 +127,7 @@ public class PlayerController : MonoBehaviour {
         }
         //gets horizontal and vertical input so you can move and dash in all 8 directions
         moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        Debug.Log(moveInput.x);
 
         switch (currentState)
         {
@@ -193,7 +210,34 @@ public class PlayerController : MonoBehaviour {
                     canMove = false;
                     currentState = PlayerStates.DashStartUp;
                 }
-            
+
+                if (touchingRightWall /*&& moveInput.x > 0*/  || touchingLeftWall /*&& moveInput.x < 0*/) {
+                    currentState = PlayerStates.WallSliding;
+                }
+
+                break;
+            case PlayerStates.WallSliding:
+                if (isGrounded)
+                {
+                    rb.drag = 0;
+                    currentState = PlayerStates.Idle;
+                }
+                else if (touchingRightWall && moveInput.x > 0)
+                {
+                    rb.drag = wallSlideDrag;
+                }
+                else if (touchingLeftWall && moveInput.x < 0)
+                {
+                    rb.drag = wallSlideDrag;
+                }
+
+                else
+                {
+                    rb.drag = 0;
+                    currentState = PlayerStates.Falling;
+                }
+
+
                 break;
             case PlayerStates.DashStartUp:
                 if ((moveInput.x < 0.1f && moveInput.x > -0.1) && (moveInput.y < 0.1f && moveInput.y > -0.1f))
@@ -520,11 +564,14 @@ public class PlayerController : MonoBehaviour {
     //flips the player around so we don't have to make more animations
     void Flip()
     {
-
+        wallCheckChanger = rightWallCheck;
+        rightWallCheck = leftWallCheck;
+        leftWallCheck = wallCheckChanger;
         facingRight = !facingRight;
         Vector3 Scaler = transform.localScale;
         Scaler.x *= -1;
         transform.localScale = Scaler;
+        playerScale = transform.localScale;
 
     }
 }

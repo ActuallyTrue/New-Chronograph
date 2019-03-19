@@ -502,7 +502,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 363869783}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.90169734, y: -3.8444006, z: -0.83922094}
+  m_LocalPosition: {x: -5.83, y: -3.8444006, z: -0.83922094}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 22328215}
@@ -586,6 +586,34 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1102840072
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1102840073}
+  m_Layer: 9
+  m_Name: WallCheck2
+  m_TagString: Untagged
+  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1102840073
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1102840072}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.5, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1451605902}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1278249534
 GameObject:
@@ -874,7 +902,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1411592656}
   m_Layer: 9
-  m_Name: WallCheck
+  m_Name: WallCheck1
   m_TagString: Untagged
   m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -1086,6 +1114,7 @@ Transform:
   m_Children:
   - {fileID: 319579908}
   - {fileID: 1411592656}
+  - {fileID: 1102840073}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1146,6 +1175,12 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 2304
   groundCheck: {fileID: 319579908}
+  whatIsWall:
+    serializedVersion: 2
+    m_Bits: 256
+  rightWallCheck: {fileID: 1411592656}
+  leftWallCheck: {fileID: 1102840073}
+  wallSlideDrag: 5
   currentState: 0
 --- !u!1 &1495246996
 GameObject:
@@ -1375,7 +1410,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1599504238}
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 10.1, y: -1.38, z: 0}
+  m_LocalPosition: {x: -6.3, y: -1.38, z: 0}
   m_LocalScale: {x: 37.19666, y: 0.716, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
