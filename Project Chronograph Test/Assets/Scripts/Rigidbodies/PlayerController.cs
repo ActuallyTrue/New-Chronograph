@@ -50,6 +50,8 @@ public class PlayerController : MonoBehaviour {
     GameObject nonCollideCore;
     MovingPlatform_controller PlatformController;
 
+    Animator playerAnim;
+
     public enum PlayerStates
     {
         Idle = 0,
@@ -72,6 +74,7 @@ public class PlayerController : MonoBehaviour {
         Movement = GetComponent<RigidbodyMovement2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         playerScale = transform.localScale;
+        playerAnim = GetComponent<Animator>();
     }
 
 
@@ -100,6 +103,7 @@ public class PlayerController : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
+
         //Debug.Log(currentState);
         //checks if you're grounded
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, whatIsGround);
@@ -266,9 +270,10 @@ public class PlayerController : MonoBehaviour {
                     currentState = PlayerStates.Falling;
                 }
                 break;
-        }
 
-	}
+        }
+        playerAnim.SetInteger("playerstate", (int)currentState);
+    }
 
     //A ton of coroutines with the same logic, the diagonal ones just use trig to get the right speeds to go at the desired dash speed diagonally.
     IEnumerator DashRight(Rigidbody2D player) {
