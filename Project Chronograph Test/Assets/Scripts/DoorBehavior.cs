@@ -32,9 +32,7 @@ public class DoorBehavior : MonoBehaviour {
             case DoorStates.Active:
                 Debug.Log("Door is now in Active");
                 //Play Possessed animation 
-                //Play closing animation
                 StartCoroutine(LoadScene());
-                currentState = DoorStates.Default;
                 break;
         }
 	}
@@ -57,7 +55,7 @@ public class DoorBehavior : MonoBehaviour {
 
     IEnumerator LoadScene()
     {
-        transitionsAnim.SetTrigger("end");
+        transitionsAnim.SetTrigger("end2");
         yield return new WaitForSeconds(1.5f);
         SceneManager.LoadScene(nextLevel);
 
