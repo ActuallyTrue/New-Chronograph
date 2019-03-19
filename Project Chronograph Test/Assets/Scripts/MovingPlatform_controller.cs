@@ -15,10 +15,15 @@ public class MovingPlatform_controller : MonoBehaviour {
     int fromWaypointIndex = 0;
     float percentBetweenWaypoints;
     float nextMoveTime;
+    [HideInInspector]
     public Vector3 velocity;
+    [HideInInspector]
     private Vector3 oldPoint;
+    [HideInInspector]
     private Vector3 currentPoint;
+    [HideInInspector]
     public float currentXVelocity;
+    [HideInInspector]
     public float currentYVelocity;
 
     Movement2D Movement;
