@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DoorBehavior : MonoBehaviour {
 
@@ -9,15 +10,14 @@ public class DoorBehavior : MonoBehaviour {
         Default = 0, 
         Active = 1,  
     }
+    public Animator transitionsAnim;
 
     public DoorStates currentState = DoorStates.Default;
-    public string NextLevel;
-    public GameObject Transition;
-    //Bool with transition set to black
+    public string nextLevel;
 
     // Use this for initialization
     void Start () {
-		//Play the fade in transition once
+
 	}
 	
 	// Update is called once per frame
@@ -33,8 +33,8 @@ public class DoorBehavior : MonoBehaviour {
                 Debug.Log("Door is now in Active");
                 //Play Possessed animation 
                 //Play closing animation
-                //Start the level loading coroutine
-                //Reset to Default
+                StartCoroutine(LoadScene());
+                currentState = DoorStates.Default;
                 break;
         }
 	}
@@ -53,5 +53,13 @@ public class DoorBehavior : MonoBehaviour {
             case DoorStates.Active:
                 break; 
         }
+    }
+
+    IEnumerator LoadScene()
+    {
+        transitionsAnim.SetTrigger("end");
+        yield return new WaitForSeconds(1.5f);
+        SceneManager.LoadScene(nextLevel);
+
     }
 }
