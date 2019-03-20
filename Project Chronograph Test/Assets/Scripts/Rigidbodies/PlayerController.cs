@@ -43,6 +43,10 @@ public class PlayerController : MonoBehaviour {
     public Transform leftWallCheck;
     private Transform wallCheckChanger;
     public float wallSlideDrag;
+    public Vector2 wallJumpOffVelocity;
+    private int lastWallDir;
+    public float afterWallJumpTimerOriginal;
+    private float afterWallJumpTimer;
 
 
 
@@ -71,7 +75,8 @@ public class PlayerController : MonoBehaviour {
         Dashing = 5,
         PossessingCollide = 6,
         PossessingNonCollide = 7,
-        WallSliding = 8
+        WallSliding = 8,
+        JumpingOffWall = 9
 
     }
 
@@ -84,14 +89,16 @@ public class PlayerController : MonoBehaviour {
         Movement = GetComponent<RigidbodyMovement2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         playerScale = transform.localScale;
+        afterWallJumpTimer = afterWallJumpTimerOriginal;
     }
 
 
     private void FixedUpdate()
     {
        
-        if (currentState == PlayerStates.Idle || currentState == PlayerStates.Moving || currentState == PlayerStates.JumpingUp || currentState == PlayerStates.Falling)
+        if (currentState == PlayerStates.Idle || currentState == PlayerStates.Moving || currentState == PlayerStates.JumpingUp || currentState == PlayerStates.Falling || currentState == PlayerStates.JumpingOffWall && afterWallJumpTimer <= 0)
         {
+            afterWallJumpTimer = afterWallJumpTimerOriginal;
             //this line literally moves the character by changing its velocity directly
             rb.velocity = new Vector2(moveInput.x * moveSpeed, rb.velocity.y);
 
@@ -106,7 +113,9 @@ public class PlayerController : MonoBehaviour {
             }
         }
 
-        
+        if(currentState == PlayerStates.JumpingOffWall && afterWallJumpTimer > 0) {
+            afterWallJumpTimer -= Time.deltaTime;
+        }
     }
 
     // Update is called once per frame
@@ -127,7 +136,6 @@ public class PlayerController : MonoBehaviour {
         }
         //gets horizontal and vertical input so you can move and dash in all 8 directions
         moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-        Debug.Log(moveInput.x);
 
         switch (currentState)
         {
@@ -225,10 +233,23 @@ public class PlayerController : MonoBehaviour {
                 else if (touchingRightWall && moveInput.x > 0)
                 {
                     rb.drag = wallSlideDrag;
+                    if (Input.GetButtonDown("Jump")) {
+                        rb.drag = 0;
+                        lastWallDir = 1;
+                        Movement.WallJumpPlayer(ref rb, new Vector2((-lastWallDir) * wallJumpOffVelocity.x, wallJumpOffVelocity.y));
+                        currentState = PlayerStates.JumpingOffWall;
+                    }
                 }
                 else if (touchingLeftWall && moveInput.x < 0)
                 {
                     rb.drag = wallSlideDrag;
+                    if (Input.GetButtonDown("Jump"))
+                    {
+                        rb.drag = 0;
+                        lastWallDir = -1;
+                        Movement.WallJumpPlayer(ref rb, new Vector2((-lastWallDir) * wallJumpOffVelocity.x, wallJumpOffVelocity.y));
+                        currentState = PlayerStates.JumpingOffWall;
+                    }
                 }
 
                 else
@@ -238,6 +259,23 @@ public class PlayerController : MonoBehaviour {
                 }
 
 
+                break;
+            case PlayerStates.JumpingOffWall:
+
+
+                //if you release jump while your y velocity is above your minJumpVelocity, your velocity gets set to your min jump velocity (variable jump height)
+                if (Input.GetButtonUp("Jump"))
+                {
+                    Movement.JumpPlayerRelease(ref rb, minJumpVelocity);
+                    //rb.drag = 0;
+                    currentState = PlayerStates.Falling;
+                }
+
+                if (rb.velocity.y <= 0)
+                {
+                    //rb.drag = 0;
+                    currentState = PlayerStates.Falling;
+                }
                 break;
             case PlayerStates.DashStartUp:
                 if ((moveInput.x < 0.1f && moveInput.x > -0.1) && (moveInput.y < 0.1f && moveInput.y > -0.1f))
@@ -564,6 +602,8 @@ public class PlayerController : MonoBehaviour {
     //flips the player around so we don't have to make more animations
     void Flip()
     {
+        //Whenever we turn the player around, the right wall check becomes the left wall check,
+        //so we hange the orientations of the wall checkers so that the wall jump code still works
         wallCheckChanger = rightWallCheck;
         rightWallCheck = leftWallCheck;
         leftWallCheck = wallCheckChanger;
