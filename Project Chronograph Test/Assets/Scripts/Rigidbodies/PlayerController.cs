@@ -345,7 +345,7 @@ public class PlayerController : MonoBehaviour {
                 if (possessing && Input.GetButtonDown("Cancel"))
                 {
                     RevertParent();
-                    //rb.velocity = transferVelocity(core, rb);
+                    rb.velocity = TransferVelocity(core, rb);
                     currentState = PlayerStates.Falling;
                 }
                 if(possessing && Input.GetButton("FastButton")) {
@@ -529,8 +529,8 @@ public class PlayerController : MonoBehaviour {
     //transfers the velocity from one rigidbody to another
     Vector2 TransferVelocity(Rigidbody2D from, Rigidbody2D player)
     {
-       if(from.gameObject.tag == "Platform") {
-            return TransferVelocityFromPlatform(from, player);
+       if(from.gameObject.layer == 10) {
+            return TransferVelocityFromMovingCore(from, player);
        }
         Vector2 vFrom = from.velocity;
        Vector2 vTo = player.velocity;
@@ -540,10 +540,10 @@ public class PlayerController : MonoBehaviour {
         return vTo;
     }
 
-    Vector2 TransferVelocityFromPlatform(Rigidbody2D from, Rigidbody2D player)
+    Vector2 TransferVelocityFromMovingCore(Rigidbody2D from, Rigidbody2D player)
     {
         PlatformController = from.gameObject.GetComponent<MovingPlatform_controller>();
-        Vector2 vFrom = new Vector2(PlatformController.currentXVelocity, PlatformController.currentYVelocity);
+        Vector2 vFrom = new Vector2(MovingCoreController.currentXVelocity, MovingCoreController.currentYVelocity);
         Vector2 vTo = player.velocity;
         vTo.x = 10f * vFrom.x;
         vTo.y = 10f * vFrom.y;
@@ -600,6 +600,7 @@ public class PlayerController : MonoBehaviour {
                 canMove = false;
                 possessing = true;
                 dashing = false;
+                core = collision.gameObject.GetComponent<Rigidbody2D>();
                 coreanim = collision.gameObject.GetComponent<CoreAnimator>();
                 MovingCoreController = collision.gameObject.GetComponent<MovingCore_Controller>();
                 nonCollideCore = collision.gameObject;
