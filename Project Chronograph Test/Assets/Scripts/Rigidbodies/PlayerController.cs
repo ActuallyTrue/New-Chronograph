@@ -64,6 +64,7 @@ public class PlayerController : MonoBehaviour {
     CoreAnimator coreanim;
     GameObject nonCollideCore;
     MovingPlatform_controller PlatformController;
+    public MovingCore_Controller MovingCoreController;
 
     public enum PlayerStates
     {
@@ -144,7 +145,7 @@ public class PlayerController : MonoBehaviour {
                 {
                     currentState = PlayerStates.Moving;
                 }
-                if (Input.GetButtonDown("Jump")) {
+                if (Input.GetButton("Jump")) {
                     currentState = PlayerStates.JumpingUp;
                 }
                 //if you can possess then dash in whatever direction you're pressing
@@ -346,6 +347,16 @@ public class PlayerController : MonoBehaviour {
                     RevertParent();
                     //rb.velocity = transferVelocity(core, rb);
                     currentState = PlayerStates.Falling;
+                }
+                if(possessing && Input.GetButton("FastButton")) {
+                    MovingCoreController.currentState = MovingCore_Controller.CoreStates.SpedUp;
+                }
+                else if (possessing && Input.GetButton("SlowButton"))
+                {
+                    MovingCoreController.currentState = MovingCore_Controller.CoreStates.SlowedDown;
+                }
+                else {
+                   MovingCoreController.currentState = MovingCore_Controller.CoreStates.Default;
                 }
                 break;
         }
@@ -590,6 +601,7 @@ public class PlayerController : MonoBehaviour {
                 possessing = true;
                 dashing = false;
                 coreanim = collision.gameObject.GetComponent<CoreAnimator>();
+                MovingCoreController = collision.gameObject.GetComponent<MovingCore_Controller>();
                 nonCollideCore = collision.gameObject;
                 NonCollideChangeParent(nonCollideCore);
                 currentState = PlayerStates.PossessingNonCollide;

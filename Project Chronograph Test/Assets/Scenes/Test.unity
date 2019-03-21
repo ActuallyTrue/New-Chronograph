@@ -1183,6 +1183,7 @@ MonoBehaviour:
   wallSlideDrag: 5
   wallJumpOffVelocity: {x: 15, y: 15}
   afterWallJumpTimerOriginal: 0.1
+  MovingCoreController: {fileID: 0}
   currentState: 0
 --- !u!1 &1495246996
 GameObject:
@@ -1429,8 +1430,10 @@ GameObject:
   - component: {fileID: 2093779233}
   - component: {fileID: 2093779232}
   - component: {fileID: 2093779231}
+  - component: {fileID: 2093779237}
   - component: {fileID: 2093779236}
   - component: {fileID: 2093779235}
+  - component: {fileID: 2093779238}
   m_Layer: 10
   m_Name: Floating Core
   m_TagString: Untagged
@@ -1546,3 +1549,51 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentState: 0
+--- !u!114 &2093779237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2093779230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66f081b1636dc4b9e86ccf45c2e35929, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  localWaypoints:
+  - {x: 4.12, y: 1.92, z: 0}
+  - {x: 0, y: 0, z: 0}
+  defaultSpeed: 2
+  fastSpeed: 6
+  slowSpeed: 0.5
+  cyclic: 1
+  waitTime: 0
+  easeAmount: 0
+  velocity: {x: 0, y: 0, z: 0}
+  currentXVelocity: 0
+  currentYVelocity: 0
+  currentState: 0
+--- !u!114 &2093779238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2093779230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27a2a5dde717f4f85a908ea4aacceb23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  collisionMask:
+    serializedVersion: 2
+    m_Bits: 0
+  passengerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  horizontalRayCount: 0
+  verticalRayCount: 0
+  maxSlopeAngle: 80
+  horizontalRaySpacing: 0
+  verticalRaySpacing: 0
+  collider: {fileID: 0}
+  playerInput: {x: 0, y: 0}

@@ -27,7 +27,6 @@ public class MovingPlatform_controller : MonoBehaviour {
     public float currentYVelocity;
 
     Movement2D Movement;
-    Rigidbody2D platrb;
 
 	// Use this for initialization
 	public void Start () {
