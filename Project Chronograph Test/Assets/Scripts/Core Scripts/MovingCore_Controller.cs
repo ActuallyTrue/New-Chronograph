@@ -18,6 +18,7 @@ public class MovingCore_Controller : MonoBehaviour {
     float percentBetweenWaypoints;
     float nextMoveTime;
     [HideInInspector]
+    public Vector3 velocity;
     [HideInInspector]
     private Vector3 oldPoint;
     [HideInInspector]
