@@ -48,6 +48,9 @@ public class PlayerController : MonoBehaviour {
     public float afterWallJumpTimerOriginal;
     private float afterWallJumpTimer;
 
+    public float possessionTimerOriginal;
+    private float possessionTimer;
+
 
 
 
@@ -89,12 +92,13 @@ public class PlayerController : MonoBehaviour {
         boxCollider = GetComponent<BoxCollider2D>();
         playerScale = transform.localScale;
         afterWallJumpTimer = afterWallJumpTimerOriginal;
+        possessionTimer = possessionTimerOriginal;
     }
 
 
     private void FixedUpdate()
     {
-       
+        Handheld.Vibrate();
         if (currentState == PlayerStates.Idle || currentState == PlayerStates.Moving || currentState == PlayerStates.JumpingUp || currentState == PlayerStates.Falling || currentState == PlayerStates.JumpingOffWall && afterWallJumpTimer <= 0)
         {
             afterWallJumpTimer = afterWallJumpTimerOriginal;
@@ -331,17 +335,21 @@ public class PlayerController : MonoBehaviour {
                 break;
             case PlayerStates.PossessingCollide:
                 //if you're currently possessing something and you press the possess button, you pop out. (doesn't work currently, jumping out will transfer velocity, possessing out will make you dash out)
-                if (possessing && Input.GetButtonDown("Cancel"))
+                if (possessing && Input.GetButtonDown("Cancel") || possessionTimer <= 0)
                 {
+                    possessionTimer = possessionTimerOriginal;
                     RevertParent();
                     rb.velocity = TransferVelocity(core, rb);
                     currentState = PlayerStates.Falling;
                 }
+
+                possessionTimer -= Time.deltaTime;
                 break;
             case PlayerStates.PossessingNonCollide:
                 //if you're currently possessing something and you press the possess button, you pop out. (doesn't work currently, jumping out will transfer velocity, possessing out will make you dash out)
-                if (possessing && Input.GetButtonDown("Cancel"))
+                if (possessing && Input.GetButtonDown("Cancel") || possessionTimer <= 0)
                 {
+                    possessionTimer = possessionTimerOriginal;
                     RevertParent();
                     rb.velocity = TransferVelocity(core, rb);
                     currentState = PlayerStates.Falling;
@@ -356,6 +364,8 @@ public class PlayerController : MonoBehaviour {
                 else {
                    MovingCoreController.currentState = MovingCore_Controller.CoreStates.Default;
                 }
+
+                possessionTimer -= Time.deltaTime;
                 break;
         }
 

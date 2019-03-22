@@ -1183,6 +1183,7 @@ MonoBehaviour:
   wallSlideDrag: 5
   wallJumpOffVelocity: {x: 15, y: 15}
   afterWallJumpTimerOriginal: 0.1
+  possessionTimerOriginal: 5
   MovingCoreController: {fileID: 0}
   currentState: 0
 --- !u!1 &1495246996
