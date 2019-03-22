@@ -61,9 +61,7 @@ public class PlayerController : MonoBehaviour {
 
     Vector3 playerScale;
 
-    CoreAnimator coreanim;
     GameObject nonCollideCore;
-    MovingPlatform_controller PlatformController;
     public MovingCore_Controller MovingCoreController;
 
     public enum PlayerStates
@@ -542,7 +540,7 @@ public class PlayerController : MonoBehaviour {
 
     Vector2 TransferVelocityFromMovingCore(Rigidbody2D from, Rigidbody2D player)
     {
-        PlatformController = from.gameObject.GetComponent<MovingPlatform_controller>();
+        //MovingCoreController = from.gameObject.GetComponent<MovingCore_Controller>();
         Vector2 vFrom = new Vector2(MovingCoreController.currentXVelocity, MovingCoreController.currentYVelocity);
         Vector2 vTo = player.velocity;
         vTo.x = 10f * vFrom.x;
@@ -601,7 +599,6 @@ public class PlayerController : MonoBehaviour {
                 possessing = true;
                 dashing = false;
                 core = collision.gameObject.GetComponent<Rigidbody2D>();
-                coreanim = collision.gameObject.GetComponent<CoreAnimator>();
                 MovingCoreController = collision.gameObject.GetComponent<MovingCore_Controller>();
                 nonCollideCore = collision.gameObject;
                 NonCollideChangeParent(nonCollideCore);
@@ -624,7 +621,7 @@ public class PlayerController : MonoBehaviour {
         Vector3 Scaler = transform.localScale;
         Scaler.x *= -1;
         transform.localScale = Scaler;
-        playerScale = transform.localScale;
+        playerScale.x = -playerScale.x;
 
     }
 }

@@ -1431,7 +1431,6 @@ GameObject:
   - component: {fileID: 2093779232}
   - component: {fileID: 2093779231}
   - component: {fileID: 2093779237}
-  - component: {fileID: 2093779236}
   - component: {fileID: 2093779235}
   - component: {fileID: 2093779238}
   - component: {fileID: 2093779239}
@@ -1538,18 +1537,6 @@ Animation:
   m_PlayAutomatically: 1
   m_AnimatePhysics: 0
   m_CullingType: 0
---- !u!114 &2093779236
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 2093779230}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 47f92a9bdae704b4e80b154421bb11e5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentState: 0
 --- !u!114 &2093779237
 MonoBehaviour:
   m_ObjectHideFlags: 0
