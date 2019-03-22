@@ -520,6 +520,7 @@ GameObject:
   - component: {fileID: 519420032}
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
+  - component: {fileID: 519420030}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -534,6 +535,25 @@ AudioListener:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_Enabled: 1
+--- !u!114 &519420030
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9825165113e1e41b9b835f00a0b3a320, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 1451605905}
+  focusAreaSize: {x: 5, y: 5}
+  verticalOffset: 0
+  lookAheadDstX: 4
+  lookSmoothTimeX: 0.5
+  verticalSmoothTime: 0
+  shakeTime: 1
+  shakeMagnitude: 5
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -1165,6 +1185,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a87ae497051046449aa241f423f490ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveInput: {x: 0, y: 0}
   moveSpeed: 5
   dashSpeed: 20
   maxJumpVelocity: 15
@@ -1184,7 +1205,11 @@ MonoBehaviour:
   wallJumpOffVelocity: {x: 15, y: 15}
   afterWallJumpTimerOriginal: 0.1
   possessionTimerOriginal: 5
+  boxCollider: {fileID: 0}
   MovingCoreController: {fileID: 0}
+  bounds:
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0, y: 0, z: 0}
   currentState: 0
 --- !u!1 &1495246996
 GameObject:

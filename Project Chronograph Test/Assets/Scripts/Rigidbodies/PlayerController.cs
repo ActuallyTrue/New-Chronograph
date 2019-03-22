@@ -9,7 +9,8 @@ public class PlayerController : MonoBehaviour {
     RigidbodyMovement2D Movement;
 
     //variables for getting input and controlling speed
-    Vector2 moveInput;
+    [HideInInspector]
+    public Vector2 moveInput;
     public float moveSpeed = 6f;
     public float dashSpeed = 10;
 
@@ -59,13 +60,19 @@ public class PlayerController : MonoBehaviour {
     private bool possessing;
     private bool canMove = true;
 
+    [HideInInspector]
+    public BoxCollider2D boxCollider;
 
-    BoxCollider2D boxCollider;
-
-    Vector3 playerScale;
+    private Vector3 playerScale;
 
     GameObject nonCollideCore;
+
+    [HideInInspector]
     public MovingCore_Controller MovingCoreController;
+
+    //This is so that the camera controller will work
+    [HideInInspector]
+    public Bounds bounds;
 
     public enum PlayerStates
     {
@@ -84,21 +91,24 @@ public class PlayerController : MonoBehaviour {
 
     public PlayerStates currentState;
 
-
+    private void Awake()
+    {
+        boxCollider = GetComponent<BoxCollider2D>();
+    }
     // Use this for initialization
     void Start () {
         rb = GetComponent<Rigidbody2D>();
         Movement = GetComponent<RigidbodyMovement2D>();
-        boxCollider = GetComponent<BoxCollider2D>();
         playerScale = transform.localScale;
         afterWallJumpTimer = afterWallJumpTimerOriginal;
         possessionTimer = possessionTimerOriginal;
+        bounds = boxCollider.bounds;
     }
 
 
     private void FixedUpdate()
     {
-        Handheld.Vibrate();
+        
         if (currentState == PlayerStates.Idle || currentState == PlayerStates.Moving || currentState == PlayerStates.JumpingUp || currentState == PlayerStates.Falling || currentState == PlayerStates.JumpingOffWall && afterWallJumpTimer <= 0)
         {
             afterWallJumpTimer = afterWallJumpTimerOriginal;
