@@ -33,4 +33,11 @@ public class RigidbodyMovement2D : MonoBehaviour {
             player.velocity = new Vector2(rb.velocity.x, minJumpVelocity);
         }
     }
+
+    public void WallJumpPlayer(ref Rigidbody2D player, Vector2 jumpVelocity) {
+
+        player.velocity = jumpVelocity;
+
+    }
+
 }
