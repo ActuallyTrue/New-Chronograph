@@ -33,42 +33,52 @@ public class CameraFollow : MonoBehaviour
     //this updates at the end of the frame (after we've moved the player)
     private void LateUpdate()
     {
-        focusArea.Update(target.boxCollider.bounds);
 
+        if (target.isGrounded && target.lastFallTime > 1f)
+        {
+            StartCoroutine(Shake(shakeTime, shakeMagnitude));
+        }
+        else
+        {
+            focusArea.Update(target.boxCollider.bounds);
 
-        Vector2 focusPosition = focusArea.center + Vector2.up * verticalOffset;
+            Vector2 focusPosition = focusArea.center + Vector2.up * verticalOffset;
 
-        //if the camera is moving and the player is moving then do the whole camera swing
-        if (focusArea.velocity.x != 0) {
-            lookAheadDirX = Mathf.Sign(focusArea.velocity.x);
-            if (Mathf.Sign(target.moveInput.x) == Mathf.Sign(focusArea.velocity.x) && target.moveInput.x != 0)
+            //if the camera is moving and the player is moving then do the whole camera swing
+            if (focusArea.velocity.x != 0)
             {
-                lookAheadStopped = false;
-                targetLookAheadX = lookAheadDirX * lookAheadDstX;
-            }
-            else {
-                if (!lookAheadStopped)
+                lookAheadDirX = Mathf.Sign(focusArea.velocity.x);
+                if (Mathf.Sign(target.moveInput.x) == Mathf.Sign(focusArea.velocity.x) && target.moveInput.x != 0)
                 {
-                    lookAheadStopped = true;
-                    //Parentheses give how far the camera has to move to catch up, then we divide by 4 to stop it earlier
-                    targetLookAheadX = currentLookAheadX + (lookAheadDirX + lookAheadDstX - currentLookAheadX) / 4f;
+                    lookAheadStopped = false;
+                    targetLookAheadX = lookAheadDirX * lookAheadDstX;
+                }
+                else
+                {
+                    if (!lookAheadStopped)
+                    {
+                        lookAheadStopped = true;
+                        //Parentheses give how far the camera has to move to catch up, then we divide by 4 to stop it earlier
+                        targetLookAheadX = currentLookAheadX + (lookAheadDirX + lookAheadDstX - currentLookAheadX) / 4f;
+                    }
                 }
             }
+
+            currentLookAheadX = Mathf.SmoothDamp(currentLookAheadX, targetLookAheadX, ref smoothLookVelocityX, lookSmoothTimeX);
+
+            focusPosition.y = Mathf.SmoothDamp(transform.position.y, focusPosition.y, ref smoothVelocityY, verticalSmoothTime);
+            focusPosition += Vector2.right * currentLookAheadX;
+
+            transform.position = (Vector3)focusPosition + Vector3.forward * -10;
         }
-
-        currentLookAheadX = Mathf.SmoothDamp(currentLookAheadX, targetLookAheadX, ref smoothLookVelocityX, lookSmoothTimeX);
-
-        focusPosition.y = Mathf.SmoothDamp(transform.position.y, focusPosition.y, ref smoothVelocityY, verticalSmoothTime);
-        focusPosition += Vector2.right * currentLookAheadX;
-
-        transform.position = (Vector3)focusPosition + Vector3.forward * -10;
         
     }
 
    
 
-    IEnumerator Shake(float duration, float magnitude) 
+    public IEnumerator Shake(float duration, float magnitude) 
     {
+        Debug.Log("shake it off");
         Vector3 orignalPos = transform.localPosition;
 
         float elapsed = 0.0f;
@@ -85,6 +95,7 @@ public class CameraFollow : MonoBehaviour
         }
 
         transform.localPosition = orignalPos;
+        target.lastFallTime = 0;
     }
 
     private void OnDrawGizmos()

@@ -31,7 +31,8 @@ public class PlayerController : MonoBehaviour {
     private bool facingRight = true;
 
     //Everything for being grounded
-    private bool isGrounded;
+    [HideInInspector]
+    public bool isGrounded;
     public float checkRadius;
     public LayerMask whatIsGround;
     public Transform groundCheck;
@@ -51,6 +52,12 @@ public class PlayerController : MonoBehaviour {
 
     public float possessionTimerOriginal;
     private float possessionTimer;
+
+    //for screenshake when landing
+    //[HideInInspector]
+    public float fallTime;
+    public float lastFallTime;
+    private float shakeTimer;
 
 
 
@@ -73,6 +80,8 @@ public class PlayerController : MonoBehaviour {
     //This is so that the camera controller will work
     [HideInInspector]
     public Bounds bounds;
+
+    public CameraFollow cameraController;
 
     public enum PlayerStates
     {
@@ -103,6 +112,7 @@ public class PlayerController : MonoBehaviour {
         afterWallJumpTimer = afterWallJumpTimerOriginal;
         possessionTimer = possessionTimerOriginal;
         bounds = boxCollider.bounds;
+        shakeTimer = cameraController.shakeTime;
     }
 
 
@@ -147,12 +157,15 @@ public class PlayerController : MonoBehaviour {
         {
             canPossess = true;
         }
+
         //gets horizontal and vertical input so you can move and dash in all 8 directions
         moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
 
         switch (currentState)
         {
             case PlayerStates.Idle:
+                lastFallTime = fallTime;
+                fallTime = 0;
                 if (moveInput.x > 0 || moveInput.x < 0)
                 {
                     currentState = PlayerStates.Moving;
@@ -173,9 +186,18 @@ public class PlayerController : MonoBehaviour {
                     currentState = PlayerStates.Falling;
                 }
 
+                if(shakeTimer > 0) {
+                    shakeTimer -= Time.deltaTime;
+                }
+                else {
+                    lastFallTime = 0;
+                    shakeTimer = cameraController.shakeTime;
+                }
+
                 break;
             case PlayerStates.Moving:
-
+                lastFallTime = fallTime;
+                fallTime = 0;
                 if (moveInput.x < 0.01f && moveInput.x > -0.01f) {
                     currentState = PlayerStates.Idle;
                 }
@@ -193,6 +215,15 @@ public class PlayerController : MonoBehaviour {
                     currentState = PlayerStates.DashStartUp;
                 }
 
+                if (shakeTimer > 0)
+                {
+                    shakeTimer -= Time.deltaTime;
+                }
+                else
+                {
+                    lastFallTime = 0;
+                    shakeTimer = cameraController.shakeTime;
+                }
                 break;
             case PlayerStates.JumpingUp:
                 //if you jump it changes your y velocity to the maxJumpVelocity
@@ -220,6 +251,7 @@ public class PlayerController : MonoBehaviour {
 
                 break;
             case PlayerStates.Falling:
+                lastFallTime = fallTime;
                 if (isGrounded == true) {
                     currentState = PlayerStates.Idle;
                 }
@@ -236,8 +268,11 @@ public class PlayerController : MonoBehaviour {
                     currentState = PlayerStates.WallSliding;
                 }
 
+                fallTime += Time.deltaTime;
+                lastFallTime = fallTime;
                 break;
             case PlayerStates.WallSliding:
+                fallTime = 0;
                 if (isGrounded)
                 {
                     rb.drag = 0;
