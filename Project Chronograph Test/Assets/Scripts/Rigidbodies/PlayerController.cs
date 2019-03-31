@@ -52,6 +52,11 @@ public class PlayerController : MonoBehaviour {
     public float possessionTimerOriginal;
     private float possessionTimer;
 
+    //Air Acceleration
+    private float velocityXSmoothing;
+    public float accelerationTimeAirborne;
+
+
 
 
 
@@ -112,8 +117,17 @@ public class PlayerController : MonoBehaviour {
         if (currentState == PlayerStates.Idle || currentState == PlayerStates.Moving || currentState == PlayerStates.JumpingUp || currentState == PlayerStates.Falling || currentState == PlayerStates.JumpingOffWall && afterWallJumpTimer <= 0)
         {
             afterWallJumpTimer = afterWallJumpTimerOriginal;
-            //this line literally moves the character by changing its velocity directly
-            rb.velocity = new Vector2(moveInput.x * moveSpeed, rb.velocity.y);
+
+            if (isGrounded)
+            {
+                //this line literally moves the character by changing its velocity directly
+                rb.velocity = new Vector2(moveInput.x * moveSpeed, rb.velocity.y);
+            }
+            else {
+                float targetVelocityX = moveInput.x * moveSpeed;
+                rb.velocity = new Vector2(Mathf.SmoothDamp(rb.velocity.x, targetVelocityX, ref velocityXSmoothing, accelerationTimeAirborne),rb.velocity.y);
+            }
+
 
             //code that flips the character so we don't have to make animations for walking in both directions
             if (facingRight == false && moveInput.x > 0)

@@ -1205,6 +1205,7 @@ MonoBehaviour:
   wallJumpOffVelocity: {x: 15, y: 15}
   afterWallJumpTimerOriginal: 0.1
   possessionTimerOriginal: 5
+  accelerationTimeAirborne: 10
   boxCollider: {fileID: 0}
   MovingCoreController: {fileID: 0}
   bounds:
