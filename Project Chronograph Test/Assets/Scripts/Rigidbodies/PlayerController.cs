@@ -22,7 +22,7 @@ public class PlayerController : MonoBehaviour {
     bool canPossess = true;
 
     //placeholder name for the variable, stands for an object that you're going to possess
-    public Rigidbody2D core;
+    public Rigidbody2D coreRB;
  
     //the player's rigidbody
     private Rigidbody2D rb;
@@ -52,12 +52,11 @@ public class PlayerController : MonoBehaviour {
     public float possessionTimerOriginal;
     private float possessionTimer;
 
-
-
-
     //dashing, possessing, and canMove booleans for deciding if you can enter an object or not
-    private bool dashing;
-    private bool possessing;
+    [HideInInspector]
+    public bool dashing; 
+    [HideInInspector]
+    public bool possessing; //dashing is public so that the blast core can know whether or not to get the player component.
     private bool canMove = true;
 
     [HideInInspector]
@@ -69,7 +68,7 @@ public class PlayerController : MonoBehaviour {
 
     [HideInInspector]
     public MovingCore_Controller MovingCoreController;
-
+ 
     //This is so that the camera controller will work
     [HideInInspector]
     public Bounds bounds;
@@ -349,7 +348,8 @@ public class PlayerController : MonoBehaviour {
                 {
                     possessionTimer = possessionTimerOriginal;
                     RevertParent();
-                    rb.velocity = TransferVelocity(core, rb);
+                    rb.velocity = TransferVelocity(coreRB, rb);
+                    canPossess = true; // so that you can dash again after unPossessing an object
                     currentState = PlayerStates.Falling;
                 }
 
@@ -361,18 +361,23 @@ public class PlayerController : MonoBehaviour {
                 {
                     possessionTimer = possessionTimerOriginal;
                     RevertParent();
-                    rb.velocity = TransferVelocity(core, rb);
+                    rb.velocity = TransferVelocity(coreRB, rb);
+                    canPossess = true; // so that you can dash again after unPossessing an object
                     currentState = PlayerStates.Falling;
                 }
-                if(possessing && Input.GetButton("FastButton")) {
+           
+                //Changing speed for moving cores 
+                if (possessing && Input.GetButton("FastButton"))
+                {
                     MovingCoreController.currentState = MovingCore_Controller.CoreStates.SpedUp;
                 }
                 else if (possessing && Input.GetButton("SlowButton"))
                 {
                     MovingCoreController.currentState = MovingCore_Controller.CoreStates.SlowedDown;
                 }
-                else {
-                   MovingCoreController.currentState = MovingCore_Controller.CoreStates.Default;
+                else
+                {
+                    MovingCoreController.currentState = MovingCore_Controller.CoreStates.Default;
                 }
 
                 possessionTimer -= Time.deltaTime;
@@ -560,7 +565,6 @@ public class PlayerController : MonoBehaviour {
 
     Vector2 TransferVelocityFromMovingCore(Rigidbody2D from, Rigidbody2D player)
     {
-        //MovingCoreController = from.gameObject.GetComponent<MovingCore_Controller>();
         Vector2 vFrom = new Vector2(MovingCoreController.currentXVelocity, MovingCoreController.currentYVelocity);
         Vector2 vTo = player.velocity;
         vTo.x = 10f * vFrom.x;
@@ -569,14 +573,6 @@ public class PlayerController : MonoBehaviour {
         return vTo;
     }
 
-
-
-    //this is how we will get control of another object's scrip from a collision
-    //void OnCollisionEnter(Collision other)
-    //{
-    //    if (other.gameObject.tag == "AI Skelly Prefab")
-    //        other.gameObject.GetComponent<AIHealth>().CurrentHealth -= damage;
-    //}
 
     //if you collide with a possessible object while dashing, you should go inside of it
     void OnCollisionEnter2D(Collision2D collision)
@@ -588,9 +584,9 @@ public class PlayerController : MonoBehaviour {
                 Debug.Log("right here");
                 possessing = true;
                 dashing = false;
-                core = collision.rigidbody;
-                Debug.Log(core);
-                ChangeParent(core);
+                coreRB = collision.rigidbody;
+                Debug.Log(coreRB);
+                ChangeParent(coreRB);
                 currentState = PlayerStates.PossessingCollide;
             }
         }
@@ -618,13 +614,12 @@ public class PlayerController : MonoBehaviour {
                 canMove = false;
                 possessing = true;
                 dashing = false;
-                core = collision.gameObject.GetComponent<Rigidbody2D>();
+                coreRB = collision.gameObject.GetComponent<Rigidbody2D>();
                 MovingCoreController = collision.gameObject.GetComponent<MovingCore_Controller>();
                 nonCollideCore = collision.gameObject;
                 NonCollideChangeParent(nonCollideCore);
                 currentState = PlayerStates.PossessingNonCollide;
             }
-
         }
     }
 
