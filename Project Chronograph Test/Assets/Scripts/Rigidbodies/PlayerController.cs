@@ -11,8 +11,10 @@ public class PlayerController : MonoBehaviour {
     //variables for getting input and controlling speed
     [HideInInspector]
     public Vector2 moveInput;
+    [HideInInspector]
+    public Vector2 pushInput; //Input specifically for when you possess a push core
     public float moveSpeed = 6f;
-    public float dashSpeed = 10;
+    public float dashSpeed = 10f;
 
     //variables for variable jump height
     public float maxJumpVelocity;
@@ -58,6 +60,8 @@ public class PlayerController : MonoBehaviour {
     [HideInInspector]
     public bool possessing; //dashing is public so that the blast core can know whether or not to get the player component.
     private bool canMove = true;
+    [HideInInspector]
+    public bool isCancelledPressed; //so that Push Cores can know whether or not to push the player early or not
 
     [HideInInspector]
     public BoxCollider2D boxCollider;
@@ -65,9 +69,11 @@ public class PlayerController : MonoBehaviour {
     private Vector3 playerScale;
 
     GameObject nonCollideCore;
+    MovingCore_Controller MovingCoreController;
+    PushCore_controller PushCoreController;
 
-    [HideInInspector]
-    public MovingCore_Controller MovingCoreController;
+    private bool isPushCore;
+
  
     //This is so that the camera controller will work
     [HideInInspector]
@@ -356,28 +362,47 @@ public class PlayerController : MonoBehaviour {
                 possessionTimer -= Time.deltaTime;
                 break;
             case PlayerStates.PossessingNonCollide:
-                //if you're currently possessing something and you press the possess button, you pop out. (doesn't work currently, jumping out will transfer velocity, possessing out will make you dash out)
-                if (possessing && Input.GetButtonDown("Cancel") || possessionTimer <= 0)
+
+                //if you're not possessing a push core, then we'll run through the normal moving core code
+                if (!isPushCore)
                 {
-                    possessionTimer = possessionTimerOriginal;
-                    RevertParent();
-                    rb.velocity = TransferVelocity(coreRB, rb);
-                    canPossess = true; // so that you can dash again after unPossessing an object
-                    currentState = PlayerStates.Falling;
+                    //if you're currently possessing something and you press the possess button, you pop out. (doesn't work currently, jumping out will transfer velocity, possessing out will make you dash out)
+                    if (possessing && Input.GetButtonDown("Cancel") || possessionTimer <= 0)
+                    {
+                        possessionTimer = possessionTimerOriginal;
+                        RevertParent();
+                        rb.velocity = TransferVelocity(coreRB, rb);
+                        canPossess = true; // so that you can dash again after unPossessing an object
+                        currentState = PlayerStates.Falling;
+                    }
+
+                    //Changing speed for moving cores 
+                    if (possessing && Input.GetButton("FastButton"))
+                    {
+                        MovingCoreController.currentState = MovingCore_Controller.CoreStates.SpedUp;
+                    }
+                    else if (possessing && Input.GetButton("SlowButton"))
+                    {
+                        MovingCoreController.currentState = MovingCore_Controller.CoreStates.SlowedDown;
+                    }
+                    else
+                    {
+                        MovingCoreController.currentState = MovingCore_Controller.CoreStates.Default;
+                    }
                 }
-           
-                //Changing speed for moving cores 
-                if (possessing && Input.GetButton("FastButton"))
-                {
-                    MovingCoreController.currentState = MovingCore_Controller.CoreStates.SpedUp;
-                }
-                else if (possessing && Input.GetButton("SlowButton"))
-                {
-                    MovingCoreController.currentState = MovingCore_Controller.CoreStates.SlowedDown;
-                }
-                else
-                {
-                    MovingCoreController.currentState = MovingCore_Controller.CoreStates.Default;
+
+                //if you are possessing a push core, then
+                else {
+                    pushInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+                    isCancelledPressed = Input.GetButtonDown("Cancel");
+                    if (PushCoreController.pushTimer <= 0 || isCancelledPressed)
+                    {
+                        possessionTimer = possessionTimerOriginal;
+                        RevertParent();
+                        //rb.velocity = TransferVelocity(coreRB, rb);
+                        canPossess = true; // so that you can dash again after unPossessing an object
+                        currentState = PlayerStates.Falling;
+                    }
                 }
 
                 possessionTimer -= Time.deltaTime;
@@ -593,9 +618,7 @@ public class PlayerController : MonoBehaviour {
 
         if (collision.gameObject.tag == "Platform")
         {
-
             transform.parent = collision.transform;
-
         }
     }
 
@@ -611,14 +634,29 @@ public class PlayerController : MonoBehaviour {
             Debug.Log("It's Happening!!!");
             if (collision.gameObject.layer == 10) //Layer 10 is for cores that you can't physically collide with
             {
-                canMove = false;
-                possessing = true;
-                dashing = false;
-                coreRB = collision.gameObject.GetComponent<Rigidbody2D>();
-                MovingCoreController = collision.gameObject.GetComponent<MovingCore_Controller>();
-                nonCollideCore = collision.gameObject;
-                NonCollideChangeParent(nonCollideCore);
-                currentState = PlayerStates.PossessingNonCollide;
+                if(collision.gameObject.tag == "PushCore") {
+                    isPushCore = true;
+                    canMove = false;
+                    possessing = true;
+                    dashing = false;
+                    coreRB = collision.gameObject.GetComponent<Rigidbody2D>();
+                    PushCoreController = collision.gameObject.GetComponent<PushCore_controller>();
+                    nonCollideCore = collision.gameObject;
+                    NonCollideChangeParent(nonCollideCore);
+                    currentState = PlayerStates.PossessingNonCollide;
+                }
+                else {
+                    canMove = false;
+                    possessing = true;
+                    dashing = false;
+                    isPushCore = false;
+                    coreRB = collision.gameObject.GetComponent<Rigidbody2D>();
+                    MovingCoreController = collision.gameObject.GetComponent<MovingCore_Controller>();
+                    nonCollideCore = collision.gameObject;
+                    NonCollideChangeParent(nonCollideCore);
+                    currentState = PlayerStates.PossessingNonCollide;
+                }
+
             }
         }
     }
