@@ -1249,6 +1249,7 @@ MonoBehaviour:
   pushInput: {x: 0, y: 0}
   moveSpeed: 5
   dashSpeed: 20
+  accelerationTimeAirborne: 0.05
   maxJumpVelocity: 15
   minJumpVelocity: 10
   coreRB: {fileID: 0}
