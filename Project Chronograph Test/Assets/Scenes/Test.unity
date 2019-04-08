@@ -717,8 +717,8 @@ MonoBehaviour:
   playerRB: {fileID: 0}
   pushTime: 2
   pushTimer: 0
-  pushXvector: 5
-  pushYvector: 5
+  pushXvector: 18
+  pushYvector: 18
 --- !u!61 &658920961
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -782,6 +782,21 @@ Prefab:
     - target: {fileID: 4646317490204408, guid: 4844a0b0898fe40d4b858996fd97128e, type: 2}
       propertyPath: m_RootOrder
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 114140524331976856, guid: 4844a0b0898fe40d4b858996fd97128e,
+        type: 2}
+      propertyPath: isBlastCore
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114140524331976856, guid: 4844a0b0898fe40d4b858996fd97128e,
+        type: 2}
+      propertyPath: isMoveWhenPossessed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114140524331976856, guid: 4844a0b0898fe40d4b858996fd97128e,
+        type: 2}
+      propertyPath: localWaypoints.Array.data[1].x
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4844a0b0898fe40d4b858996fd97128e, type: 2}
@@ -1264,7 +1279,7 @@ MonoBehaviour:
   rightWallCheck: {fileID: 1411592656}
   leftWallCheck: {fileID: 1102840073}
   wallSlideDrag: 5
-  wallJumpOffVelocity: {x: 15, y: 15}
+  wallJumpOffVelocity: {x: 20, y: 15}
   afterWallJumpTimerOriginal: 0.1
   possessionTimerOriginal: 5
   dashing: 0

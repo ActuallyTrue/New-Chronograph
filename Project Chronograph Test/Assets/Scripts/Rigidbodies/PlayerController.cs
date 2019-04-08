@@ -294,12 +294,12 @@ public class PlayerController : MonoBehaviour {
 
 
                 //if you release jump while your y velocity is above your minJumpVelocity, your velocity gets set to your min jump velocity (variable jump height)
-                if (Input.GetButtonUp("Jump"))
-                {
-                    Movement.JumpPlayerRelease(ref rb, minJumpVelocity);
-                    //rb.drag = 0;
-                    currentState = PlayerStates.Falling;
-                }
+                //if (Input.GetButtonUp("Jump"))
+                //{
+                //    Movement.JumpPlayerRelease(ref rb, minJumpVelocity);
+                //    //rb.drag = 0;
+                //    currentState = PlayerStates.Falling;
+                //}
 
                 if (rb.velocity.y <= 0)
                 {

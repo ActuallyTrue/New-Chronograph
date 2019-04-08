@@ -5,6 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(Movement2D))]
 public class MovingCore_Controller : MonoBehaviour {
     public bool isBlastCore; //for making a moving core a blast core or not
+    public bool isMoveWhenPossessed; // for making a moving core only move when possessed
     public float explodeTime; //how long in seconds before a blast core will explode
     //MAKE SURE TO SET THE PASSENGERMASK TO WHATEVER YOU WANNA MOVE 13:51
     public Vector3[] localWaypoints;
@@ -65,8 +66,9 @@ public class MovingCore_Controller : MonoBehaviour {
     void Update()
     {
         //if the blast core bool is not checked, then it will act like a normal moving core
-        if (!isBlastCore)
+        if (!isBlastCore && !isMoveWhenPossessed)
         {
+            //normal moving core switch case
             switch (currentState)
             {
                 case CoreStates.Default:
@@ -111,12 +113,132 @@ public class MovingCore_Controller : MonoBehaviour {
 
             }
         }
+        //if both are checked, then we want the moving core to act like both at the same time
+        else if(isBlastCore && isMoveWhenPossessed) {
+            //if the player is not possessing the blast core, it will not move
+            if (player == null)
+            {
+                explodeTimer = explodeTime;
+                //blast core switch case statement
+                switch (currentState)
+                {
+                    case CoreStates.Default:
+                        //to stop errors from showing up if we want the blast core to be stationary
+                        if (localWaypoints.Length != 0)
+                        {
+                            currentPoint = transform.position;
+                            currentXVelocity = (transform.position.x - oldPoint.x) / Time.deltaTime;
+                            currentYVelocity = (transform.position.y - oldPoint.y) / Time.deltaTime;
+                            Movement.UpdateRaycastOrigins();
+
+                            velocity = Movement.CalculatePlatformMovement(0, ref fromWaypointIndex, ref percentBetweenWaypoints, ref globalWaypoints, cyclic, ref nextMoveTime, waitTime, easeAmount);
+                            Movement.CalculatePassengerMovement(velocity);
+                            Movement.MovePassengers(true);
+                            Movement.MovePlatform(velocity);
+                            Movement.MovePassengers(false);
+                            oldPoint = currentPoint;
+                        }
+                        //setting this to true at the end of every frame the core is moving normally to appropriately change
+                        //the timer variable whenever the blast core gets possessed
+                        justGotPossessed = true;
+                        break;
+
+                }
+            }
+            //if the player is possessing the blast core then it will explode
+            else
+            {
+                if (justGotPossessed)
+                {
+                    explodeTimer = explodeTime;
+                    justGotPossessed = false;
+                }
+                switch (currentState)
+                {
+                    case CoreStates.Default:
+                        Debug.Log("hi");
+                        if (localWaypoints.Length != 0)
+                        {
+                            currentPoint = transform.position;
+                            currentXVelocity = (transform.position.x - oldPoint.x) / Time.deltaTime;
+                            currentYVelocity = (transform.position.y - oldPoint.y) / Time.deltaTime;
+                            Movement.UpdateRaycastOrigins();
+
+                            velocity = Movement.CalculatePlatformMovement(defaultSpeed, ref fromWaypointIndex, ref percentBetweenWaypoints, ref globalWaypoints, cyclic, ref nextMoveTime, waitTime, easeAmount);
+                            Movement.CalculatePassengerMovement(velocity);
+                            Movement.MovePassengers(true);
+                            Movement.MovePlatform(velocity);
+                            Movement.MovePassengers(false);
+                            oldPoint = currentPoint;
+                        }
+
+                        if (explodeTimer <= 0)
+                        {
+                            //THIS IS WHERE WE WILL START THE KILL PLAYER FUCTION
+                            //LIKE: player.KillPlayer();
+                        }
+                        explodeTimer -= Time.deltaTime;
+                        break;
+                    case CoreStates.SpedUp:
+                        //to stop errors from showing up if we want the blast core to be stationary
+                        if (localWaypoints.Length != 0)
+                        {
+                            currentPoint = transform.position;
+                            currentXVelocity = (transform.position.x - oldPoint.x) / Time.deltaTime;
+                            currentYVelocity = (transform.position.y - oldPoint.y) / Time.deltaTime;
+                            Movement.UpdateRaycastOrigins();
+
+                            velocity = Movement.CalculatePlatformMovement(fastSpeed, ref fromWaypointIndex, ref percentBetweenWaypoints, ref globalWaypoints, cyclic, ref nextMoveTime, waitTime, easeAmount);
+                            Movement.CalculatePassengerMovement(velocity);
+                            Movement.MovePassengers(true);
+                            Movement.MovePlatform(velocity);
+                            Movement.MovePassengers(false);
+                            oldPoint = currentPoint;
+                        }
+
+                        if (explodeTimer <= 0)
+                        {
+                            //THIS IS WHERE WE WILL START THE KILL PLAYER FUCTION
+                            //LIKE: player.KillPlayer();
+                        }
+                        explodeTimer -= Time.deltaTime;
+                        break;
+                    case CoreStates.SlowedDown:
+                        //to stop errors from showing up if we want the blast core to be stationary
+                        if (localWaypoints.Length != 0)
+                        {
+                            currentPoint = transform.position;
+                            currentXVelocity = (transform.position.x - oldPoint.x) / Time.deltaTime;
+                            currentYVelocity = (transform.position.y - oldPoint.y) / Time.deltaTime;
+                            Movement.UpdateRaycastOrigins();
+
+                            velocity = Movement.CalculatePlatformMovement(slowSpeed, ref fromWaypointIndex, ref percentBetweenWaypoints, ref globalWaypoints, cyclic, ref nextMoveTime, waitTime, easeAmount);
+                            Movement.CalculatePassengerMovement(velocity);
+                            Movement.MovePassengers(true);
+                            Movement.MovePlatform(velocity);
+                            Movement.MovePassengers(false);
+                            oldPoint = currentPoint;
+                        }
+
+                        if (explodeTimer <= 0)
+                        {
+                            //explodeTimer = explodeTime
+                            //THIS IS WHERE WE WILL START THE KILL PLAYER FUCTION
+                            //LIKE: player.KillPlayer();
+                        }
+                        explodeTimer -= Time.deltaTime;
+                        break;
+
+                }
+            }
+        }
         //if the blast core bool is checked, it will act like a blast core
-        else {
+        else if(isBlastCore) {
             //if the player is not possessing the blast core, it will act like normal
             if (player == null)
             {
                 explodeTimer = explodeTime;
+                //blast core switch case statement
                 switch (currentState)
                 {
                     case CoreStates.Default:
@@ -230,8 +352,89 @@ public class MovingCore_Controller : MonoBehaviour {
             }
         }
 
+        else if (isMoveWhenPossessed) {
 
-    }
+            //if the player is not possessing the blast core, it will act like normal
+            if (player == null)
+            {
+                explodeTimer = explodeTime;
+                //blast core switch case statement
+                switch (currentState)
+                {
+                    case CoreStates.Default:
+                        //to stop errors from showing up if we want the blast core to be stationary
+                        if (localWaypoints.Length != 0)
+                        {
+                            currentPoint = transform.position;
+                            currentXVelocity = (transform.position.x - oldPoint.x) / Time.deltaTime;
+                            currentYVelocity = (transform.position.y - oldPoint.y) / Time.deltaTime;
+                            Movement.UpdateRaycastOrigins();
+
+                            velocity = Movement.CalculatePlatformMovement(0, ref fromWaypointIndex, ref percentBetweenWaypoints, ref globalWaypoints, cyclic, ref nextMoveTime, waitTime, easeAmount);
+                            Movement.CalculatePassengerMovement(velocity);
+                            Movement.MovePassengers(true);
+                            Movement.MovePlatform(velocity);
+                            Movement.MovePassengers(false);
+                            oldPoint = currentPoint;
+                        }
+                        //setting this to true at the end of every frame the core is moving normally to appropriately change
+                        //the timer variable whenever the blast core gets possessed
+                        justGotPossessed = true;
+                        break;
+
+                }
+            }
+            //if the player is possessing the blast core then it will act like normal
+            else
+            {
+                //normal moving core switch case
+                switch (currentState)
+                {
+                    case CoreStates.Default:
+                        currentPoint = transform.position;
+                        currentXVelocity = (transform.position.x - oldPoint.x) / Time.deltaTime;
+                        currentYVelocity = (transform.position.y - oldPoint.y) / Time.deltaTime;
+                        Movement.UpdateRaycastOrigins();
+
+                        velocity = Movement.CalculatePlatformMovement(defaultSpeed, ref fromWaypointIndex, ref percentBetweenWaypoints, ref globalWaypoints, cyclic, ref nextMoveTime, waitTime, easeAmount);
+                        Movement.CalculatePassengerMovement(velocity);
+                        Movement.MovePassengers(true);
+                        Movement.MovePlatform(velocity);
+                        Movement.MovePassengers(false);
+                        oldPoint = currentPoint;
+                        break;
+                    case CoreStates.SpedUp:
+                        currentPoint = transform.position;
+                        currentXVelocity = (transform.position.x - oldPoint.x) / Time.deltaTime;
+                        currentYVelocity = (transform.position.y - oldPoint.y) / Time.deltaTime;
+                        Movement.UpdateRaycastOrigins();
+
+                        velocity = Movement.CalculatePlatformMovement(fastSpeed, ref fromWaypointIndex, ref percentBetweenWaypoints, ref globalWaypoints, cyclic, ref nextMoveTime, waitTime, easeAmount);
+                        Movement.CalculatePassengerMovement(velocity);
+                        Movement.MovePassengers(true);
+                        Movement.MovePlatform(velocity);
+                        Movement.MovePassengers(false);
+                        oldPoint = currentPoint;
+                        break;
+                    case CoreStates.SlowedDown:
+                        currentPoint = transform.position;
+                        currentXVelocity = (transform.position.x - oldPoint.x) / Time.deltaTime;
+                        currentYVelocity = (transform.position.y - oldPoint.y) / Time.deltaTime;
+                        Movement.UpdateRaycastOrigins();
+
+                        velocity = Movement.CalculatePlatformMovement(slowSpeed, ref fromWaypointIndex, ref percentBetweenWaypoints, ref globalWaypoints, cyclic, ref nextMoveTime, waitTime, easeAmount);
+                        Movement.CalculatePassengerMovement(velocity);
+                        Movement.MovePassengers(true);
+                        Movement.MovePlatform(velocity);
+                        Movement.MovePassengers(false);
+                        oldPoint = currentPoint;
+                        break;
+
+                }
+            }
+            }
+
+        }
 
     Vector3 GiveOldPosition(Vector3 position)
     {
