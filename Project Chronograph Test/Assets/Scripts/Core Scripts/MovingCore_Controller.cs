@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//move when possessed cores need to move back to their original positions after the player stops possessing them.
 [RequireComponent(typeof(Movement2D))]
 public class MovingCore_Controller : MonoBehaviour {
     public bool isBlastCore; //for making a moving core a blast core or not
@@ -65,7 +66,7 @@ public class MovingCore_Controller : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        //if the blast core bool is not checked, then it will act like a normal moving core
+        //if the blast core and the isMoveWhenPossessed bool is not checked, then it will act like a normal moving core
         if (!isBlastCore && !isMoveWhenPossessed)
         {
             //normal moving core switch case
@@ -123,15 +124,18 @@ public class MovingCore_Controller : MonoBehaviour {
                 switch (currentState)
                 {
                     case CoreStates.Default:
-                        //to stop errors from showing up if we want the blast core to be stationary
-                        if (localWaypoints.Length != 0)
-                        {
+                        ////to stop errors from showing up if we want the blast core to be stationary
+                        //if (!isMoveWhenPossessed)
+                        //{
+                        //if you're not at the first position on the core track, it will move back to the first position.
+                        if(fromWaypointIndex > 0) { 
+                     
                             currentPoint = transform.position;
                             currentXVelocity = (transform.position.x - oldPoint.x) / Time.deltaTime;
                             currentYVelocity = (transform.position.y - oldPoint.y) / Time.deltaTime;
                             Movement.UpdateRaycastOrigins();
 
-                            velocity = Movement.CalculatePlatformMovement(0, ref fromWaypointIndex, ref percentBetweenWaypoints, ref globalWaypoints, cyclic, ref nextMoveTime, waitTime, easeAmount);
+                            velocity = Movement.CalculatePlatformMovement(defaultSpeed, ref fromWaypointIndex, ref percentBetweenWaypoints, ref globalWaypoints, cyclic, ref nextMoveTime, waitTime, easeAmount);
                             Movement.CalculatePassengerMovement(velocity);
                             Movement.MovePassengers(true);
                             Movement.MovePlatform(velocity);
@@ -151,12 +155,15 @@ public class MovingCore_Controller : MonoBehaviour {
                 if (justGotPossessed)
                 {
                     explodeTimer = explodeTime;
+                    if (fromWaypointIndex != 1)
+                    {
+                        fromWaypointIndex = 0;
+                    }
                     justGotPossessed = false;
                 }
                 switch (currentState)
                 {
                     case CoreStates.Default:
-                        Debug.Log("hi");
                         if (localWaypoints.Length != 0)
                         {
                             currentPoint = transform.position;
@@ -362,20 +369,24 @@ public class MovingCore_Controller : MonoBehaviour {
                 switch (currentState)
                 {
                     case CoreStates.Default:
-                        //to stop errors from showing up if we want the blast core to be stationary
+                        //if you're not at the first position on the core track, it will move back to the first position.
                         if (localWaypoints.Length != 0)
                         {
-                            currentPoint = transform.position;
-                            currentXVelocity = (transform.position.x - oldPoint.x) / Time.deltaTime;
-                            currentYVelocity = (transform.position.y - oldPoint.y) / Time.deltaTime;
-                            Movement.UpdateRaycastOrigins();
+                            if (fromWaypointIndex > 0)
+                            {
 
-                            velocity = Movement.CalculatePlatformMovement(0, ref fromWaypointIndex, ref percentBetweenWaypoints, ref globalWaypoints, cyclic, ref nextMoveTime, waitTime, easeAmount);
-                            Movement.CalculatePassengerMovement(velocity);
-                            Movement.MovePassengers(true);
-                            Movement.MovePlatform(velocity);
-                            Movement.MovePassengers(false);
-                            oldPoint = currentPoint;
+                                currentPoint = transform.position;
+                                currentXVelocity = (transform.position.x - oldPoint.x) / Time.deltaTime;
+                                currentYVelocity = (transform.position.y - oldPoint.y) / Time.deltaTime;
+                                Movement.UpdateRaycastOrigins();
+
+                                velocity = Movement.CalculatePlatformMovement(defaultSpeed, ref fromWaypointIndex, ref percentBetweenWaypoints, ref globalWaypoints, cyclic, ref nextMoveTime, waitTime, easeAmount);
+                                Movement.CalculatePassengerMovement(velocity);
+                                Movement.MovePassengers(true);
+                                Movement.MovePlatform(velocity);
+                                Movement.MovePassengers(false);
+                                oldPoint = currentPoint;
+                            }
                         }
                         //setting this to true at the end of every frame the core is moving normally to appropriately change
                         //the timer variable whenever the blast core gets possessed
@@ -384,9 +395,17 @@ public class MovingCore_Controller : MonoBehaviour {
 
                 }
             }
-            //if the player is possessing the blast core then it will act like normal
+            //if the player is possessing the core then it will act like normal
             else
             {
+                if (justGotPossessed) 
+                {
+                    if(fromWaypointIndex != 1) {
+                        fromWaypointIndex = 0;
+                    }
+                    justGotPossessed = false;
+                }
+
                 //normal moving core switch case
                 switch (currentState)
                 {
@@ -447,7 +466,7 @@ public class MovingCore_Controller : MonoBehaviour {
         if (collision.gameObject.layer == 9)
         {
             player = collision.GetComponent<PlayerController>();
-            if (!player.possessing)
+            if (player.currentState != PlayerController.PlayerStates.Dashing)
             {
                 player = null;
             }
