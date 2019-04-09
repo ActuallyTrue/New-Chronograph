@@ -6,6 +6,7 @@ public class BoostZoneController : MonoBehaviour
 {
 
     Rigidbody2D playerRB;
+    PlayerController player;
     public Vector2 boostVector;
     public float timeUntilBoost;
     private float boostTimer;
@@ -18,6 +19,7 @@ public class BoostZoneController : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         playerRB = collision.gameObject.GetComponent<Rigidbody2D>();
+        player = collision.gameObject.GetComponent<PlayerController>();
     }
 
     private void OnTriggerStay2D(Collider2D collision)
@@ -29,9 +31,18 @@ public class BoostZoneController : MonoBehaviour
         else
         {
             playerRB.velocity = boostVector;
+            player.currentState = PlayerController.PlayerStates.Boosting;
+            player.canPossess = true;
             boostTimer = timeUntilBoost;
             playerRB = null;
+            player = null;
         }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        boostTimer = timeUntilBoost;
+
     }
 
 }

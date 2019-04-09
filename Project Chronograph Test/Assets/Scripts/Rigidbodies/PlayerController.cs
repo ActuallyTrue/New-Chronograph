@@ -23,7 +23,7 @@ public class PlayerController : MonoBehaviour {
     public float minJumpVelocity;
 
     //Boolean to decide if you can possess or not
-    bool canPossess = true;
+    public bool canPossess = true; //public so that boost zones can give you your dash back
 
     //placeholder name for the variable, stands for an object that you're going to possess
     public Rigidbody2D coreRB;
@@ -73,6 +73,7 @@ public class PlayerController : MonoBehaviour {
     GameObject nonCollideCore;
     MovingCore_Controller MovingCoreController;
     PushCore_controller PushCoreController;
+    BoostZoneController BoostZoneController;
 
     private bool isPushCore;
 
@@ -92,7 +93,8 @@ public class PlayerController : MonoBehaviour {
         PossessingCollide = 6,
         PossessingNonCollide = 7,
         WallSliding = 8,
-        JumpingOffWall = 9
+        JumpingOffWall = 9,
+        Boosting = 10
 
     }
 
@@ -353,13 +355,24 @@ public class PlayerController : MonoBehaviour {
                 break;
             case PlayerStates.PossessingCollide:
                 //if you're currently possessing something and you press the possess button, you pop out. (doesn't work currently, jumping out will transfer velocity, possessing out will make you dash out)
-                if (possessing && Input.GetButtonDown("Cancel") || possessionTimer <= 0)
+                if (possessing && Input.GetButtonDown("Jump") || possessionTimer <= 0)
                 {
                     possessionTimer = possessionTimerOriginal;
                     RevertParent();
-                    rb.velocity = TransferVelocity(coreRB, rb);
-                    canPossess = true; // so that you can dash again after unPossessing an object
-                    currentState = PlayerStates.Falling;
+                    if(coreRB.velocity == new Vector2(0, 0)) 
+                    {
+                        canPossess = true;
+                        isGrounded = true;
+                        Movement.JumpPlayer(ref rb, isGrounded, maxJumpVelocity);
+                        currentState = PlayerStates.JumpingUp;
+                    }
+                    else 
+                    {
+                        rb.velocity = TransferVelocity(coreRB, rb);
+                        canPossess = true; // so that you can dash again after unPossessing an object
+                        currentState = PlayerStates.Falling;
+                    }
+
                 }
 
                 possessionTimer -= Time.deltaTime;
@@ -370,13 +383,23 @@ public class PlayerController : MonoBehaviour {
                 if (!isPushCore)
                 {
                     //if you're currently possessing something and you press the possess button, you pop out. (doesn't work currently, jumping out will transfer velocity, possessing out will make you dash out)
-                    if (possessing && Input.GetButtonDown("Cancel") || possessionTimer <= 0)
+                    if (possessing && Input.GetButtonDown("Jump") || possessionTimer <= 0)
                     {
                         possessionTimer = possessionTimerOriginal;
                         RevertParent();
-                        rb.velocity = TransferVelocity(coreRB, rb);
-                        canPossess = true; // so that you can dash again after unPossessing an object
-                        currentState = PlayerStates.Falling;
+                        if (MovingCoreController.currentXVelocity == 0 && MovingCoreController.currentYVelocity == 0)
+                        {
+                            canPossess = true;
+                            isGrounded = true;
+                            Movement.JumpPlayer(ref rb, isGrounded, maxJumpVelocity);
+                            currentState = PlayerStates.JumpingUp;
+                        }
+                        else
+                        {
+                            rb.velocity = TransferVelocity(coreRB, rb);
+                            canPossess = true; // so that you can dash again after unPossessing an object
+                            currentState = PlayerStates.Falling;
+                        }
                     }
 
                     //Changing speed for moving cores 
@@ -409,6 +432,13 @@ public class PlayerController : MonoBehaviour {
                 }
 
                 possessionTimer -= Time.deltaTime;
+                break;
+            case PlayerStates.Boosting:
+
+                if (rb.velocity.y <= 0)
+                {
+                    currentState = PlayerStates.Falling;
+                }
                 break;
         }
 
@@ -577,6 +607,10 @@ public class PlayerController : MonoBehaviour {
     }
 
 
+    //for the future
+    //if the vfrom y velocity is positive, then add the player's jump velocity onto it and put go into the jumping up state
+    //if the vfrom y velocity is negative, then just go through it how it is already but put you into the falling state
+    //also, you need to add variable push strengths for push cores!!!!
     //transfers the velocity from one rigidbody to another
     Vector2 TransferVelocity(Rigidbody2D from, Rigidbody2D player)
     {
@@ -663,6 +697,8 @@ public class PlayerController : MonoBehaviour {
             }
         }
     }
+
+   
 
 
     //flips the player around so we don't have to make more animations
