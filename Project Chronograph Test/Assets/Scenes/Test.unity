@@ -1456,7 +1456,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 841e7f25f049a40e9963c2b75c862ad8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boostVector: {x: -15, y: 15}
+  boostVector: {x: 15, y: 15}
   timeUntilBoost: 0.2
 --- !u!61 &1541684077
 BoxCollider2D:
