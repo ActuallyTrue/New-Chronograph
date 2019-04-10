@@ -465,7 +465,9 @@ public class MovingCore_Controller : MonoBehaviour {
         if (collision.gameObject.layer == 9)
         {
             player = collision.GetComponent<PlayerController>();
-            if (player.currentState != PlayerController.PlayerStates.Dashing)
+            //if it's the animated player, use the possessing non collide state for the if statement, if
+            //it's the box player, use the dashing state
+            if (player.currentState != PlayerController.PlayerStates.PossessingNonCollide)
             {
                 player = null;
             }

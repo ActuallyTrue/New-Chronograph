@@ -34,6 +34,8 @@ public class PlayerController : MonoBehaviour {
 
     //for turning the player around
     private bool facingRight = true;
+    //so that we can use the run start up frames
+    private bool wasJustIdle;
 
     //Everything for being grounded
     private bool isGrounded;
@@ -74,6 +76,9 @@ public class PlayerController : MonoBehaviour {
     MovingCore_Controller MovingCoreController;
     PushCore_controller PushCoreController;
     BoostZoneController BoostZoneController;
+    SpriteRenderer spriteRenderer;
+
+    private Animator playerAnim;
 
     private bool isPushCore;
 
@@ -108,6 +113,8 @@ public class PlayerController : MonoBehaviour {
     void Start () {
         rb = GetComponent<Rigidbody2D>();
         Movement = GetComponent<RigidbodyMovement2D>();
+        playerAnim = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
         playerScale = transform.localScale;
         afterWallJumpTimer = afterWallJumpTimerOriginal;
         possessionTimer = possessionTimerOriginal;
@@ -151,6 +158,9 @@ public class PlayerController : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
+        playerAnim.SetInteger("PlayerState", (int)currentState);
+        playerAnim.SetBool("wasJustIdle", wasJustIdle);
+
         //checks if you're grounded
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, whatIsGround);
 
@@ -170,6 +180,7 @@ public class PlayerController : MonoBehaviour {
         switch (currentState)
         {
             case PlayerStates.Idle:
+                wasJustIdle = true;
                 if (moveInput.x > 0 || moveInput.x < 0)
                 {
                     currentState = PlayerStates.Moving;
@@ -197,6 +208,7 @@ public class PlayerController : MonoBehaviour {
                 }
                 if (Input.GetButtonDown("Jump"))
                 {
+                    wasJustIdle = false;
                     currentState = PlayerStates.JumpingUp;
                 }
 
@@ -205,9 +217,11 @@ public class PlayerController : MonoBehaviour {
                 {
                     dashing = true;
                     canPossess = false;
+                    wasJustIdle = false;
                     currentState = PlayerStates.DashStartUp;
                 }
 
+                wasJustIdle = false;
                 break;
             case PlayerStates.JumpingUp:
                 //if you jump it changes your y velocity to the maxJumpVelocity
@@ -357,6 +371,7 @@ public class PlayerController : MonoBehaviour {
                 }
                 break;
             case PlayerStates.PossessingCollide:
+                spriteRenderer.color = Color.clear;
                 //if you're currently possessing something and you press the possess button, you pop out. (doesn't work currently, jumping out will transfer velocity, possessing out will make you dash out)
                 if (possessing && Input.GetButtonDown("Jump") || possessionTimer <= 0)
                 {
@@ -367,6 +382,7 @@ public class PlayerController : MonoBehaviour {
                         canPossess = true;
                         isGrounded = true;
                         Movement.JumpPlayer(ref rb, isGrounded, maxJumpVelocity);
+                        spriteRenderer.color = Color.white;
                         currentState = PlayerStates.JumpingUp;
                     }
                     else 
@@ -375,17 +391,20 @@ public class PlayerController : MonoBehaviour {
                         if (rb.velocity.y >= 0)
                         {
                             canPossess = true;
+                            spriteRenderer.color = Color.white;
                             currentState = PlayerStates.JumpingUp;
                         }
                         else if (rb.velocity.y == 0)
                         {
                             canPossess = true;
                             rb.velocity = new Vector2(rb.velocity.x, maxJumpVelocity);
+                            spriteRenderer.color = Color.white;
                             currentState = PlayerStates.Boosting;
                         }
                         else
                         {
                             canPossess = true; // so that you can dash again after unPossessing an object
+                            spriteRenderer.color = Color.white;
                             currentState = PlayerStates.Falling;
                         }
                     }
@@ -395,7 +414,7 @@ public class PlayerController : MonoBehaviour {
                 possessionTimer -= Time.deltaTime;
                 break;
             case PlayerStates.PossessingNonCollide:
-
+                spriteRenderer.color = Color.clear;
                 //if you're not possessing a push core, then we'll run through the normal moving core code
                 if (!isPushCore)
                 {
@@ -409,6 +428,7 @@ public class PlayerController : MonoBehaviour {
                             canPossess = true;
                             isGrounded = true;
                             Movement.JumpPlayer(ref rb, isGrounded, maxJumpVelocity);
+                            spriteRenderer.color = Color.white;
                             currentState = PlayerStates.JumpingUp;
                         }
                         else
@@ -416,16 +436,19 @@ public class PlayerController : MonoBehaviour {
                             rb.velocity = TransferVelocity(coreRB, rb);
                             if(rb.velocity.y > 0) {
                                 canPossess = true;
+                                spriteRenderer.color = Color.white;
                                 currentState = PlayerStates.JumpingUp;
                             }
                             else if(rb.velocity.y == 0) 
                             {
                                 canPossess = true;
                                 rb.velocity = new Vector2(rb.velocity.x, maxJumpVelocity);
+                                spriteRenderer.color = Color.white;
                                 currentState = PlayerStates.Boosting;
                             }
                             else {
                                 canPossess = true; // so that you can dash again after unPossessing an object
+                                spriteRenderer.color = Color.white;
                                 currentState = PlayerStates.Falling;
                             }
 
@@ -457,6 +480,7 @@ public class PlayerController : MonoBehaviour {
                         RevertParent();
                         //rb.velocity = TransferVelocity(coreRB, rb);
                         canPossess = true; // so that you can dash again after unPossessing an object
+                        spriteRenderer.color = Color.white;
                         currentState = PlayerStates.Falling;
                     }
                 }

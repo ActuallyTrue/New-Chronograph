@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="run_start.png">
+	<!-- Created with Adobe Animate version 18.0.2.126 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="run_start0000" x="0" y="0" width="55" height="87"/>
+	<SubTexture name="run_start0001" x="55" y="0" width="55" height="87"/>
+	<SubTexture name="run_start0002" x="110" y="0" width="55" height="87"/>
+	<SubTexture name="run_start0003" x="165" y="0" width="55" height="87"/>
+	<SubTexture name="run_start0004" x="0" y="87" width="55" height="87"/>
+</TextureAtlas>
