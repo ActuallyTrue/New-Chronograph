@@ -740,7 +740,41 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-   
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (dashing)
+        {
+            Debug.Log("It's Happening!!!");
+            if (collision.gameObject.layer == 10) //Layer 10 is for cores that you can't physically collide with
+            {
+                if(collision.gameObject.tag == "PushCore") {
+                    isPushCore = true;
+                    canMove = false;
+                    possessing = true;
+                    dashing = false;
+                    coreRB = collision.gameObject.GetComponent<Rigidbody2D>();
+                    PushCoreController = collision.gameObject.GetComponent<PushCore_controller>();
+                    nonCollideCore = collision.gameObject;
+                    NonCollideChangeParent(nonCollideCore);
+                    currentState = PlayerStates.PossessingNonCollide;
+                }
+                else {
+                    canMove = false;
+                    possessing = true;
+                    dashing = false;
+                    isPushCore = false;
+                    coreRB = collision.gameObject.GetComponent<Rigidbody2D>();
+                    MovingCoreController = collision.gameObject.GetComponent<MovingCore_Controller>();
+                    nonCollideCore = collision.gameObject;
+                    NonCollideChangeParent(nonCollideCore);
+                    currentState = PlayerStates.PossessingNonCollide;
+                }
+
+            }
+        }
+    }
+
+
 
 
     //flips the player around so we don't have to make more animations
