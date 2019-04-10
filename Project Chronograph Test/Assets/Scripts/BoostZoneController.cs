@@ -18,8 +18,11 @@ public class BoostZoneController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        playerRB = collision.gameObject.GetComponent<Rigidbody2D>();
-        player = collision.gameObject.GetComponent<PlayerController>();
+        if (collision.gameObject.layer == 9)
+        {
+            playerRB = collision.gameObject.GetComponent<Rigidbody2D>();
+            player = collision.gameObject.GetComponent<PlayerController>();
+        }
     }
 
     private void OnTriggerStay2D(Collider2D collision)

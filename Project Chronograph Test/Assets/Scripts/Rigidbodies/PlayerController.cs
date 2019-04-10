@@ -369,8 +369,22 @@ public class PlayerController : MonoBehaviour {
                     else 
                     {
                         rb.velocity = TransferVelocity(coreRB, rb);
-                        canPossess = true; // so that you can dash again after unPossessing an object
-                        currentState = PlayerStates.Falling;
+                        if (rb.velocity.y >= 0)
+                        {
+                            canPossess = true;
+                            currentState = PlayerStates.JumpingUp;
+                        }
+                        else if (rb.velocity.y == 0)
+                        {
+                            canPossess = true;
+                            rb.velocity = new Vector2(rb.velocity.x, maxJumpVelocity);
+                            currentState = PlayerStates.Boosting;
+                        }
+                        else
+                        {
+                            canPossess = true; // so that you can dash again after unPossessing an object
+                            currentState = PlayerStates.Falling;
+                        }
                     }
 
                 }
@@ -397,8 +411,21 @@ public class PlayerController : MonoBehaviour {
                         else
                         {
                             rb.velocity = TransferVelocity(coreRB, rb);
-                            canPossess = true; // so that you can dash again after unPossessing an object
-                            currentState = PlayerStates.Falling;
+                            if(rb.velocity.y > 0) {
+                                canPossess = true;
+                                currentState = PlayerStates.JumpingUp;
+                            }
+                            else if(rb.velocity.y == 0) 
+                            {
+                                canPossess = true;
+                                rb.velocity = new Vector2(rb.velocity.x, maxJumpVelocity);
+                                currentState = PlayerStates.Boosting;
+                            }
+                            else {
+                                canPossess = true; // so that you can dash again after unPossessing an object
+                                currentState = PlayerStates.Falling;
+                            }
+
                         }
                     }
 
@@ -420,7 +447,7 @@ public class PlayerController : MonoBehaviour {
                 //if you are possessing a push core, then
                 else {
                     pushInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-                    isCancelledPressed = Input.GetButtonDown("Cancel");
+                    isCancelledPressed = Input.GetButtonDown("Jump");
                     if (PushCoreController.pushTimer <= 0 || isCancelledPressed)
                     {
                         possessionTimer = possessionTimerOriginal;
@@ -439,6 +466,21 @@ public class PlayerController : MonoBehaviour {
                 {
                     currentState = PlayerStates.Falling;
                 }
+                if (isGrounded == true) {
+                    currentState = PlayerStates.Idle;
+                }
+                if (touchingRightWall /*&& moveInput.x > 0*/  || touchingLeftWall /*&& moveInput.x < 0*/)
+                {
+                    currentState = PlayerStates.WallSliding;
+                }
+                //we can possibly make the player be able to dash out of the boosting state
+                //if (Input.GetButtonDown("Possess") && canPossess)
+                //{
+                //    dashing = true;
+                //    canPossess = false;
+                //    canMove = false;
+                //    currentState = PlayerStates.DashStartUp;
+                //}
                 break;
         }
 
