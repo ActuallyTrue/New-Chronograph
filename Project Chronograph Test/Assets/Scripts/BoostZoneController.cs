@@ -39,8 +39,8 @@ public class BoostZoneController : MonoBehaviour
                 player.currentState = PlayerController.PlayerStates.Boosting;
                 player.canPossess = true;
                 boostTimer = timeUntilBoost;
-                playerRB = null;
-                player = null;
+                //playerRB = null;
+                //player = null;
             }
         }
     }

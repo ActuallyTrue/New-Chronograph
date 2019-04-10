@@ -684,6 +684,8 @@ public class PlayerController : MonoBehaviour {
         if (dashing) {
             if (collision.gameObject.layer == 11) //Layer 11 is for cores that you can physically collide with
             {
+                //stopping the player so that they don't start possessing with an initial velocity
+                rb.velocity = new Vector2(0, 0);
                 canMove = false;
                 Debug.Log("right here");
                 possessing = true;
@@ -714,6 +716,8 @@ public class PlayerController : MonoBehaviour {
             if (collision.gameObject.layer == 10) //Layer 10 is for cores that you can't physically collide with
             {
                 if(collision.gameObject.tag == "PushCore") {
+                    //stopping the player so that they don't start possessing with an initial velocity
+                    rb.velocity = new Vector2(0, 0);
                     isPushCore = true;
                     canMove = false;
                     possessing = true;
@@ -725,6 +729,8 @@ public class PlayerController : MonoBehaviour {
                     currentState = PlayerStates.PossessingNonCollide;
                 }
                 else {
+                    //stopping the player so that they don't start possessing with an initial velocity
+                    rb.velocity = new Vector2(0, 0);
                     canMove = false;
                     possessing = true;
                     dashing = false;
@@ -748,6 +754,8 @@ public class PlayerController : MonoBehaviour {
             if (collision.gameObject.layer == 10) //Layer 10 is for cores that you can't physically collide with
             {
                 if(collision.gameObject.tag == "PushCore") {
+                    //stopping the player so that they don't start possessing with an initial velocity
+                    rb.velocity = new Vector2(0, 0);
                     isPushCore = true;
                     canMove = false;
                     possessing = true;
@@ -759,7 +767,8 @@ public class PlayerController : MonoBehaviour {
                     currentState = PlayerStates.PossessingNonCollide;
                 }
                 else {
-                    canMove = false;
+                    //stopping the player so that they don't start possessing with an initial velocity
+                    rb.velocity = new Vector2(0, 0); canMove = false;
                     possessing = true;
                     dashing = false;
                     isPushCore = false;
