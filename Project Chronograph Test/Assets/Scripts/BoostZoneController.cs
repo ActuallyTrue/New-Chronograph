@@ -27,18 +27,21 @@ public class BoostZoneController : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (boostTimer >= 0)
+        if (player.currentState != PlayerController.PlayerStates.Dashing)
         {
-            boostTimer -= Time.deltaTime;
-        }
-        else
-        {
-            playerRB.velocity = boostVector;
-            player.currentState = PlayerController.PlayerStates.Boosting;
-            player.canPossess = true;
-            boostTimer = timeUntilBoost;
-            playerRB = null;
-            player = null;
+            if (boostTimer >= 0)
+            {
+                boostTimer -= Time.deltaTime;
+            }
+            else
+            {
+                playerRB.velocity = boostVector;
+                player.currentState = PlayerController.PlayerStates.Boosting;
+                player.canPossess = true;
+                boostTimer = timeUntilBoost;
+                playerRB = null;
+                player = null;
+            }
         }
     }
 
