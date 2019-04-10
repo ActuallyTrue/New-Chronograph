@@ -1457,7 +1457,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boostVector: {x: -15, y: 15}
-  timeUntilBoost: 0.2
+  timeUntilBoost: 0.005
 --- !u!61 &1541684077
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1532,7 +1532,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1541684075}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.24, y: 3.22, z: -0.20086257}
+  m_LocalPosition: {x: 21.95, y: 2.15, z: -0.20086257}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children: []
   m_Father: {fileID: 0}
