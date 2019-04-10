@@ -282,7 +282,6 @@ public class MovingCore_Controller : MonoBehaviour {
                 switch (currentState)
                 {
                     case CoreStates.Default:
-                        Debug.Log("hi");
                         if (localWaypoints.Length != 0)
                         {
                             currentPoint = transform.position;

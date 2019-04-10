@@ -23,6 +23,7 @@ public class PlayerController : MonoBehaviour {
     public float minJumpVelocity;
 
     //Boolean to decide if you can possess or not
+    [HideInInspector]
     public bool canPossess = true; //public so that boost zones can give you your dash back
 
     //placeholder name for the variable, stands for an object that you're going to possess
@@ -56,12 +57,11 @@ public class PlayerController : MonoBehaviour {
     public float possessionTimerOriginal;
     private float possessionTimer;
 
-    //dashing, possessing, and canMove booleans for deciding if you can enter an object or not
+    //dashing and possessing booleans for deciding if you can enter an object or not
     [HideInInspector]
     public bool dashing; 
     [HideInInspector]
     public bool possessing; //dashing is public so that the blast core can know whether or not to get the player component.
-    private bool canMove = true;
     [HideInInspector]
     public bool isCancelledPressed; //so that Push Cores can know whether or not to push the player early or not
 
@@ -117,30 +117,30 @@ public class PlayerController : MonoBehaviour {
 
     private void FixedUpdate()
     {
-        
-        if (currentState == PlayerStates.Idle || currentState == PlayerStates.Moving || currentState == PlayerStates.JumpingUp || currentState == PlayerStates.Falling || currentState == PlayerStates.JumpingOffWall && afterWallJumpTimer <= 0)
-        {
-            afterWallJumpTimer = afterWallJumpTimerOriginal;
 
-            if (isGrounded)
+            if (currentState == PlayerStates.Idle || currentState == PlayerStates.Moving || currentState == PlayerStates.JumpingUp || currentState == PlayerStates.Falling || currentState == PlayerStates.JumpingOffWall && afterWallJumpTimer <= 0)
             {
-                //this line literally moves the character by changing its velocity directly
-                rb.velocity = new Vector2(moveInput.x * moveSpeed, rb.velocity.y);
-            }
-            else
-            {
-                float targetVelocityX = moveInput.x * moveSpeed;
-                rb.velocity = new Vector2(Mathf.SmoothDamp(rb.velocity.x, targetVelocityX, ref velocityXSmoothing, accelerationTimeAirborne), rb.velocity.y);
-            }
-            //code that flips the character so we don't have to make animations for walking in both directions
-            if (facingRight == false && moveInput.x > 0)
-            {
-                Flip();
-            }
-            else if (facingRight == true && moveInput.x < 0)
-            {
-                Flip();
-            }
+                afterWallJumpTimer = afterWallJumpTimerOriginal;
+
+                if (isGrounded)
+                {
+                    //this line literally moves the character by changing its velocity directly
+                    rb.velocity = new Vector2(moveInput.x * moveSpeed, rb.velocity.y);
+                }
+                else
+                {
+                    float targetVelocityX = moveInput.x * moveSpeed;
+                    rb.velocity = new Vector2(Mathf.SmoothDamp(rb.velocity.x, targetVelocityX, ref velocityXSmoothing, accelerationTimeAirborne), rb.velocity.y);
+                }
+                //code that flips the character so we don't have to make animations for walking in both directions
+                if (facingRight == false && moveInput.x > 0)
+                {
+                    Flip();
+                }
+                else if (facingRight == true && moveInput.x < 0)
+                {
+                    Flip();
+                }
         }
 
         if(currentState == PlayerStates.JumpingOffWall && afterWallJumpTimer > 0) {
@@ -182,7 +182,6 @@ public class PlayerController : MonoBehaviour {
                 {
                     dashing = true;
                     canPossess = false;
-                    canMove = false;
                     currentState = PlayerStates.DashStartUp;
                 }
                 if (!isGrounded)
@@ -206,7 +205,6 @@ public class PlayerController : MonoBehaviour {
                 {
                     dashing = true;
                     canPossess = false;
-                    canMove = false;
                     currentState = PlayerStates.DashStartUp;
                 }
 
@@ -227,7 +225,6 @@ public class PlayerController : MonoBehaviour {
                 {
                     dashing = true;
                     canPossess = false;
-                    canMove = false;
                     currentState = PlayerStates.DashStartUp;
                 }
 
@@ -247,7 +244,6 @@ public class PlayerController : MonoBehaviour {
                 {
                     dashing = true;
                     canPossess = false;
-                    canMove = false;
                     currentState = PlayerStates.DashStartUp;
                 }
 
@@ -257,6 +253,13 @@ public class PlayerController : MonoBehaviour {
 
                 break;
             case PlayerStates.WallSliding:
+                //so the player can dash out of the wallsliding state
+                if (Input.GetButtonDown("Possess") && canPossess)
+                {
+                    dashing = true;
+                    canPossess = false;
+                    currentState = PlayerStates.DashStartUp;
+                }
                 if (isGrounded)
                 {
                     rb.drag = 0;
@@ -478,7 +481,6 @@ public class PlayerController : MonoBehaviour {
                 //{
                 //    dashing = true;
                 //    canPossess = false;
-                //    canMove = false;
                 //    currentState = PlayerStates.DashStartUp;
                 //}
                 break;
@@ -497,7 +499,6 @@ public class PlayerController : MonoBehaviour {
         }
         player.velocity = Vector2.zero;
         dashing = false;
-        canMove = true;
     }
 
     IEnumerator DashUp(Rigidbody2D player)
@@ -513,7 +514,6 @@ public class PlayerController : MonoBehaviour {
         player.velocity = Vector2.zero;
         canPossess = false;
         dashing = false;
-        canMove = true;
     }
 
     IEnumerator DashUpRight(Rigidbody2D player)
@@ -531,7 +531,6 @@ public class PlayerController : MonoBehaviour {
         player.velocity = Vector2.zero;
         canPossess = false;
         dashing = false;
-        canMove = true;
     }
 
     IEnumerator DashUpLeft(Rigidbody2D player)
@@ -549,7 +548,6 @@ public class PlayerController : MonoBehaviour {
         player.velocity = Vector2.zero;
         canPossess = false;
         dashing = false;
-        canMove = true;
     }
 
     IEnumerator DashLeft(Rigidbody2D player)
@@ -564,7 +562,6 @@ public class PlayerController : MonoBehaviour {
         }
         player.velocity = Vector2.zero;
         dashing = false;
-        canMove = true;
     }
 
     IEnumerator DashDownLeft(Rigidbody2D player)
@@ -581,7 +578,6 @@ public class PlayerController : MonoBehaviour {
         }
         player.velocity = Vector2.zero;
         dashing = false;
-        canMove = true;
     }
 
     IEnumerator DashDown(Rigidbody2D player)
@@ -596,7 +592,6 @@ public class PlayerController : MonoBehaviour {
         }
         player.velocity = Vector2.zero;
         dashing = false;
-        canMove = true;
     }
 
     IEnumerator DashDownRight(Rigidbody2D player)
@@ -613,13 +608,11 @@ public class PlayerController : MonoBehaviour {
         }
         player.velocity = Vector2.zero;
         dashing = false;
-        canMove = true;
     }
 
     //Changes the player's parent to whatever it's trying to possess
     void ChangeParent(Rigidbody2D core)
     {
-        canMove = false;
         boxCollider.enabled = false;
         rb.isKinematic = true;
         transform.parent = core.transform;
@@ -628,7 +621,6 @@ public class PlayerController : MonoBehaviour {
 
     void NonCollideChangeParent(GameObject core)
     {
-        canMove = false;
         boxCollider.enabled = false;
         rb.isKinematic = true;
         transform.parent = core.transform;
@@ -644,7 +636,6 @@ public class PlayerController : MonoBehaviour {
         boxCollider.enabled = true;
         transform.localScale = playerScale;
         transform.rotation = Quaternion.Euler(0,0,0);
-        canMove = true;
 
     }
 
@@ -686,7 +677,6 @@ public class PlayerController : MonoBehaviour {
             {
                 //stopping the player so that they don't start possessing with an initial velocity
                 rb.velocity = new Vector2(0, 0);
-                canMove = false;
                 Debug.Log("right here");
                 possessing = true;
                 dashing = false;
@@ -719,7 +709,6 @@ public class PlayerController : MonoBehaviour {
                     //stopping the player so that they don't start possessing with an initial velocity
                     rb.velocity = new Vector2(0, 0);
                     isPushCore = true;
-                    canMove = false;
                     possessing = true;
                     dashing = false;
                     coreRB = collision.gameObject.GetComponent<Rigidbody2D>();
@@ -731,7 +720,6 @@ public class PlayerController : MonoBehaviour {
                 else {
                     //stopping the player so that they don't start possessing with an initial velocity
                     rb.velocity = new Vector2(0, 0);
-                    canMove = false;
                     possessing = true;
                     dashing = false;
                     isPushCore = false;
@@ -757,7 +745,6 @@ public class PlayerController : MonoBehaviour {
                     //stopping the player so that they don't start possessing with an initial velocity
                     rb.velocity = new Vector2(0, 0);
                     isPushCore = true;
-                    canMove = false;
                     possessing = true;
                     dashing = false;
                     coreRB = collision.gameObject.GetComponent<Rigidbody2D>();
@@ -768,7 +755,7 @@ public class PlayerController : MonoBehaviour {
                 }
                 else {
                     //stopping the player so that they don't start possessing with an initial velocity
-                    rb.velocity = new Vector2(0, 0); canMove = false;
+                    rb.velocity = new Vector2(0, 0);
                     possessing = true;
                     dashing = false;
                     isPushCore = false;
