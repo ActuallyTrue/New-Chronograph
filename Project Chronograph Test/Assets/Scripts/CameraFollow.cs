@@ -12,9 +12,6 @@ public class CameraFollow : MonoBehaviour
     public float lookSmoothTimeX;
     public float verticalSmoothTime;
 
-    public float shakeTime;
-    public float shakeMagnitude;
-
     FocusArea focusArea;
 
     float currentLookAheadX;

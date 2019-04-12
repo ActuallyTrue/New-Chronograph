@@ -387,9 +387,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e7e0b467b5ff48e28f1916169585364, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  localWaypoints: []
-  speed: 0
-  cyclic: 0
+  localWaypoints:
+  - {x: 0, y: 2.94, z: 0}
+  - {x: 0, y: 0, z: 0}
+  speed: 2
+  cyclic: 1
   waitTime: 0
   easeAmount: 0
   velocity: {x: 0, y: 0, z: 0}
@@ -489,7 +491,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &363869784
 Transform:
   m_ObjectHideFlags: 0
@@ -503,7 +505,7 @@ Transform:
   - {fileID: 22328215}
   - {fileID: 1278249535}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &519420028
 GameObject:
@@ -541,14 +543,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9825165113e1e41b9b835f00a0b3a320, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 0}
-  focusAreaSize: {x: 0, y: 0}
+  target: {fileID: 1576505862}
+  focusAreaSize: {x: 5, y: 5}
   verticalOffset: 0
-  lookAheadDstX: 0
-  lookSmoothTimeX: 0
-  verticalSmoothTime: 0
-  shakeTime: 0
-  shakeMagnitude: 0
+  lookAheadDstX: 2
+  lookSmoothTimeX: 0.2
+  verticalSmoothTime: 0.005
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -695,7 +695,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &658920960
 MonoBehaviour:
@@ -710,10 +710,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerController: {fileID: 0}
   playerRB: {fileID: 0}
-  pushTime: 0
+  pushTime: 1
   pushTimer: 0
-  pushXvector: 0
-  pushYvector: 0
+  pushXvector: 15
+  pushYvector: 15
 --- !u!61 &658920961
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -776,7 +776,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4296843811276166, guid: 4844a0b0898fe40d4b858996fd97128e, type: 2}
       propertyPath: m_RootOrder
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4844a0b0898fe40d4b858996fd97128e, type: 2}
@@ -996,34 +996,6 @@ MonoBehaviour:
   rightPushRange: 0
   velocityThreshold: 0
   previousVelocity: {x: 0, y: 0}
---- !u!1 &1336372324
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 304934394}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1336372325}
-  m_Layer: 0
-  m_Name: Missing Prefab
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1336372325
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 304934394}
-  m_GameObject: {fileID: 1336372324}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1441768212
 GameObject:
   m_ObjectHideFlags: 0
@@ -1286,8 +1258,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 841e7f25f049a40e9963c2b75c862ad8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boostVector: {x: 0, y: 0}
-  timeUntilBoost: 0
+  boostVector: {x: 15, y: 15}
+  timeUntilBoost: 0.05
 --- !u!61 &1541684077
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1439,28 +1411,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveInput: {x: 0, y: 0}
   pushInput: {x: 0, y: 0}
-  moveSpeed: 6
-  dashSpeed: 10
-  accelerationTimeAirborne: 0
-  maxJumpVelocity: 0
-  minJumpVelocity: 0
+  moveSpeed: 5
+  dashSpeed: 20
+  accelerationTimeAirborne: 0.05
+  maxJumpVelocity: 15
+  minJumpVelocity: 10
   canPossess: 1
   coreRB: {fileID: 0}
   isGrounded: 0
-  checkRadius: 0
+  checkRadius: 0.1
   whatIsGround:
     serializedVersion: 2
-    m_Bits: 0
-  groundCheck: {fileID: 0}
+    m_Bits: 2304
+  groundCheck: {fileID: 1270627920}
   whatIsWall:
     serializedVersion: 2
-    m_Bits: 0
-  rightWallCheck: {fileID: 0}
-  leftWallCheck: {fileID: 0}
-  wallSlideDrag: 0
-  wallJumpOffVelocity: {x: 0, y: 0}
-  afterWallJumpTimerOriginal: 0
-  possessionTimerOriginal: 0
+    m_Bits: 256
+  rightWallCheck: {fileID: 976644091}
+  leftWallCheck: {fileID: 2104676532}
+  wallSlideDrag: 5
+  wallJumpOffVelocity: {x: 20, y: 15}
+  afterWallJumpTimerOriginal: 0.1
+  possessionTimerOriginal: 5
   dashing: 0
   possessing: 0
   isCancelledPressed: 0
