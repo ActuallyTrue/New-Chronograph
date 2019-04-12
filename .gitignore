@@ -48,3 +48,4 @@ fmod_editor.log
 /FMOD/**.cache
 /FMOD/**.restore
 *.dll
+Project Chronograph Test/.DS_Store
