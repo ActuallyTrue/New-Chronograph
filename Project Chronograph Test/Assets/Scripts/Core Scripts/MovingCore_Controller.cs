@@ -128,8 +128,9 @@ public class MovingCore_Controller : MonoBehaviour {
                         //if (!isMoveWhenPossessed)
                         //{
                         //if you're not at the first position on the core track, it will move back to the first position.
-                        if(fromWaypointIndex > 0) { 
-                     
+                        if (fromWaypointIndex > 0)
+                        {
+
                             currentPoint = transform.position;
                             currentXVelocity = (transform.position.x - oldPoint.x) / Time.deltaTime;
                             currentYVelocity = (transform.position.y - oldPoint.y) / Time.deltaTime;
@@ -152,6 +153,9 @@ public class MovingCore_Controller : MonoBehaviour {
             //if the player is possessing the blast core then it will explode
             else
             {
+                //We only want to go through with all this code if the player is possessing the code
+                if (player.currentState == PlayerController.PlayerStates.PossessingNonCollide || player.currentState == PlayerController.PlayerStates.PossessingNonCollide)
+                { 
                 if (justGotPossessed)
                 {
                     explodeTimer = explodeTime;
@@ -238,6 +242,7 @@ public class MovingCore_Controller : MonoBehaviour {
 
                 }
             }
+            }
         }
         //if the blast core bool is checked, it will act like a blast core
         else if(isBlastCore) {
@@ -274,6 +279,9 @@ public class MovingCore_Controller : MonoBehaviour {
             //if the player is possessing the blast core then it will explode
             else
             {
+                //We only want this code to run if the player is possessing the core
+                if (player.currentState == PlayerController.PlayerStates.PossessingNonCollide || player.currentState == PlayerController.PlayerStates.PossessingNonCollide)
+                { 
                 if (justGotPossessed)
                 {
                     explodeTimer = explodeTime;
@@ -305,8 +313,8 @@ public class MovingCore_Controller : MonoBehaviour {
                         explodeTimer -= Time.deltaTime;
                         break;
                     case CoreStates.SpedUp:
-                    //to stop errors from showing up if we want the blast core to be stationary
-                       if (localWaypoints.Length != 0)
+                        //to stop errors from showing up if we want the blast core to be stationary
+                        if (localWaypoints.Length != 0)
                         {
                             currentPoint = transform.position;
                             currentXVelocity = (transform.position.x - oldPoint.x) / Time.deltaTime;
@@ -356,6 +364,7 @@ public class MovingCore_Controller : MonoBehaviour {
 
                 }
             }
+            }
         }
 
         else if (isMoveWhenPossessed) {
@@ -397,9 +406,13 @@ public class MovingCore_Controller : MonoBehaviour {
             //if the player is possessing the core then it will act like normal
             else
             {
-                if (justGotPossessed) 
+                //we only want to move if the player is Possessing the core
+                if (player.currentState == PlayerController.PlayerStates.PossessingNonCollide || player.currentState == PlayerController.PlayerStates.PossessingNonCollide)
+                { 
+                if (justGotPossessed)
                 {
-                    if(fromWaypointIndex != 1) {
+                    if (fromWaypointIndex != 1)
+                    {
                         fromWaypointIndex = 0;
                     }
                     justGotPossessed = false;
@@ -447,12 +460,12 @@ public class MovingCore_Controller : MonoBehaviour {
                         Movement.MovePassengers(false);
                         oldPoint = currentPoint;
                         break;
-
                 }
             }
-            }
-
         }
+    }
+
+    }
 
     Vector3 GiveOldPosition(Vector3 position)
     {
@@ -465,12 +478,6 @@ public class MovingCore_Controller : MonoBehaviour {
         if (collision.gameObject.layer == 9)
         {
             player = collision.GetComponent<PlayerController>();
-            //if it's the animated player, use the possessing non collide state for the if statement, if
-            //it's the box player, use the dashing state
-            if (player.currentState != PlayerController.PlayerStates.PossessingNonCollide)
-            {
-                player = null;
-            }
         }
     }
 
