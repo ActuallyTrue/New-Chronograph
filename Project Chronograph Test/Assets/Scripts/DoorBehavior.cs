@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class DoorBehavior : MonoBehaviour {
+    public PlayerController playerController;
+    public Rigidbody2D playerRB;
 
     public enum DoorStates
     {
@@ -43,9 +45,13 @@ public class DoorBehavior : MonoBehaviour {
         { 
             case DoorStates.Default:
                 //This needs the player to be in possession mode
-                if (target.tag == "Player")
+                if (target.gameObject.layer == 9)
                 {
+                    playerController = target.GetComponent<PlayerController>();
+                    playerRB = target.GetComponent<Rigidbody2D>();
+                    RemovePlayerComponents();
                     currentState = DoorStates.Active;
+
                 }
                 break;
             case DoorStates.Active:
@@ -59,5 +65,11 @@ public class DoorBehavior : MonoBehaviour {
         yield return new WaitForSeconds(1.5f);
         SceneManager.LoadScene(nextLevel);
 
+    }
+
+    private void RemovePlayerComponents()
+    {
+        playerController = null;
+        playerRB = null;
     }
 }
