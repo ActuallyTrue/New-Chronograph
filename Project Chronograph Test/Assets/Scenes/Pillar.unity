@@ -490,7 +490,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!95 &331843836
 Animator:
   serializedVersion: 3
@@ -15148,7 +15148,7 @@ GameObject:
   - component: {fileID: 751517757}
   - component: {fileID: 751517756}
   - component: {fileID: 751517755}
-  m_Layer: 8
+  m_Layer: 10
   m_Name: Transition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15367,27 +15367,40 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 856109727}
-  - component: {fileID: 856109726}
   - component: {fileID: 856109728}
-  m_Layer: 8
+  - component: {fileID: 856109726}
+  m_Layer: 10
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!65 &856109726
-BoxCollider:
+--- !u!61 &856109726
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 856109725}
+  m_Enabled: 1
+  m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 1
-  m_Enabled: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: -0.24978828}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.0171585, y: 0.39958477, z: 1}
-  m_Center: {x: 0.008579254, y: -0.3516717, z: 0}
+  m_Size: {x: 1, y: 0.50042343}
+  m_EdgeRadius: 0
 --- !u!4 &856109727
 Transform:
   m_ObjectHideFlags: 0
@@ -15414,7 +15427,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 130875447}
-  transitionsAnim: {fileID: 0}
+  transitionsAnim: {fileID: 1409786229}
   levelName: Pillar
 --- !u!1 &870525317
 GameObject:
@@ -15645,11 +15658,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1720933313864158, guid: 7731a62633892414596f441e28425c7e, type: 2}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1720933313864158, guid: 7731a62633892414596f441e28425c7e, type: 2}
       propertyPath: m_Layer
-      value: 8
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7731a62633892414596f441e28425c7e, type: 2}
@@ -16030,13 +16043,13 @@ GameObject:
   - component: {fileID: 1409786231}
   - component: {fileID: 1409786230}
   - component: {fileID: 1409786229}
-  m_Layer: 8
+  m_Layer: 10
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1409786228
 RectTransform:
   m_ObjectHideFlags: 0
@@ -16490,7 +16503,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1720933313864158, guid: 7731a62633892414596f441e28425c7e, type: 2}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7731a62633892414596f441e28425c7e, type: 2}

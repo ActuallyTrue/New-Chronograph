@@ -26,6 +26,7 @@ public class KillPlayer : MonoBehaviour
     {
         if (target.gameObject.layer == 9)
         {
+            Debug.Log("Door is now in Active");
             StartCoroutine(ResetLevel());
         }
     }
