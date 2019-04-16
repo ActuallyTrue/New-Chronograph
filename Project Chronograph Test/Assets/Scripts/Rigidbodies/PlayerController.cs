@@ -17,6 +17,10 @@ public class PlayerController : MonoBehaviour {
     public float dashSpeed = 10f;
     public float accelerationTimeAirborne;
     private float velocityXSmoothing;
+    public float moveAfterLaunchTime;
+    private float moveAfterLaunchTimer;
+    private int dashDir; //1 is right, 2 is diag down right, and so on clockwise (0 is null basically)
+    private int lastDir;
 
     //variables for variable jump height
     public float maxJumpVelocity;
@@ -122,6 +126,7 @@ public class PlayerController : MonoBehaviour {
         afterWallJumpTimer = afterWallJumpTimerOriginal;
         possessionTimer = possessionTimerOriginal;
         bounds = boxCollider.bounds;
+        moveAfterLaunchTimer = moveAfterLaunchTime;
     }
 
 
@@ -161,8 +166,14 @@ public class PlayerController : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
+        if(moveInput.x != 0)
+        {
+            lastDir = (int)Mathf.Sign(moveInput.x);
+        }
         playerAnim.SetInteger("PlayerState", (int)currentState);
         playerAnim.SetBool("wasJustIdle", wasJustIdle);
+        playerAnim.SetFloat("moveInput", Mathf.Abs(moveInput.x));
+        playerAnim.SetInteger("DashDir", dashDir);
 
         //checks if you're grounded
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, checkRadius, whatIsGround);
@@ -252,6 +263,9 @@ public class PlayerController : MonoBehaviour {
                 //if you get sent out of a push core, this must be set to false so that the same push core won't push you just from touching it again
                 isCancelledPressed = false; 
                 if (isGrounded == true) {
+                    if (Mathf.Abs(moveInput.x) > 0) {
+                        currentState = PlayerStates.Moving;
+                    }
                     currentState = PlayerStates.Idle;
                 }
                 //if you can possess then dash in whatever direction you're pressing
@@ -320,47 +334,67 @@ public class PlayerController : MonoBehaviour {
             case PlayerStates.DashStartUp:
                 if ((moveInput.x < 0.1f && moveInput.x > -0.1) && (moveInput.y < 0.1f && moveInput.y > -0.1f))
                 {
-                    StartCoroutine(DashRight(rb));
-                }
-                if (moveInput.x > 0.1f && moveInput.y > 0.1f)
-                {
-                    //up right
-                    StartCoroutine(DashUpRight(rb));
-                }
-                if ((moveInput.x < 0.1f && moveInput.x > -0.1) && moveInput.y > 0.1f)
-                {
-                    //up
-                    StartCoroutine(DashUp(rb));
-                }
-                if (moveInput.x < -0.1f && moveInput.y > 0.1f)
-                {
-                    //up left
-                    StartCoroutine(DashUpLeft(rb));
+                    if (lastDir == 1)
+                    {
+                        //right
+                        dashDir = 1;
+                        StartCoroutine(DashRight(rb));
+                    }
+                    if (lastDir == -1)
+                    {
+                        //left
+                        dashDir = 5;
+                        StartCoroutine(DashLeft(rb));
+                    }
+                    
                 }
                 if (moveInput.x > 0.1f && (moveInput.y < 0.1f && moveInput.y > -0.1f))
                 {
                     //right
+                    dashDir = 1;
                     StartCoroutine(DashRight(rb));
                 }
                 if (moveInput.x > 0.1f && moveInput.y < -0.1f)
                 {
                     //down right
+                    dashDir = 2;
                     StartCoroutine(DashDownRight(rb));
                 }
                 if ((moveInput.x < 0.1f && moveInput.x > -0.1) && moveInput.y < -0.1f)
                 {
                     //down
+                    dashDir = 3;
                     StartCoroutine(DashDown(rb));
                 }
                 if (moveInput.x < -0.1f && moveInput.y < -0.1f)
                 {
                     //down left
+                    dashDir = 4;
                     StartCoroutine(DashDownLeft(rb));
                 }
                 if (moveInput.x < -0.1f && (moveInput.y < 0.1f && moveInput.y > -0.1f))
                 {
                     //left
+                    dashDir = 5;
                     StartCoroutine(DashLeft(rb));
+                }
+                if (moveInput.x < -0.1f && moveInput.y > 0.1f)
+                {
+                    //up left
+                    dashDir = 6;
+                    StartCoroutine(DashUpLeft(rb));
+                }
+                if ((moveInput.x < 0.1f && moveInput.x > -0.1) && moveInput.y > 0.1f)
+                {
+                    //up
+                    dashDir = 7;
+                    StartCoroutine(DashUp(rb));
+                }
+                if (moveInput.x > 0.1f && moveInput.y > 0.1f)
+                {
+                    //up right
+                    dashDir = 8;
+                    StartCoroutine(DashUpRight(rb));
                 }
                 break;
             case PlayerStates.Dashing:
@@ -489,17 +523,27 @@ public class PlayerController : MonoBehaviour {
                 break;
             case PlayerStates.Boosting:
 
-                if (rb.velocity.y <= 0)
+                if (moveAfterLaunchTimer <= 0)
                 {
+                    moveAfterLaunchTimer = moveAfterLaunchTime;
                     currentState = PlayerStates.Falling;
                 }
-                if (isGrounded == true) {
-                    currentState = PlayerStates.Idle;
-                }
-                if (touchingRightWall /*&& moveInput.x > 0*/  || touchingLeftWall /*&& moveInput.x < 0*/)
-                {
-                    currentState = PlayerStates.WallSliding;
-                }
+
+                moveAfterLaunchTimer -= Time.deltaTime;
+
+
+
+                //if (rb.velocity.y <= 0)
+                //{
+                //    currentState = PlayerStates.Falling;
+                //}
+                //if (isGrounded == true) {
+                //    currentState = PlayerStates.Idle;
+                //}
+                //if (touchingRightWall /*&& moveInput.x > 0*/  || touchingLeftWall /*&& moveInput.x < 0*/)
+                //{
+                //    currentState = PlayerStates.WallSliding;
+                //}
                 //we can possibly make the player be able to dash out of the boosting state
                 //if (Input.GetButtonDown("Possess") && canPossess)
                 //{
@@ -522,6 +566,8 @@ public class PlayerController : MonoBehaviour {
             yield return null;
         }
         player.velocity = Vector2.zero;
+        dashDir = 0;
+        canPossess = false;
         dashing = false;
     }
 
@@ -536,6 +582,7 @@ public class PlayerController : MonoBehaviour {
             yield return null;
         }
         player.velocity = Vector2.zero;
+        dashDir = 0;
         canPossess = false;
         dashing = false;
     }
@@ -553,6 +600,7 @@ public class PlayerController : MonoBehaviour {
             yield return null;
         }
         player.velocity = Vector2.zero;
+        dashDir = 0;
         canPossess = false;
         dashing = false;
     }
@@ -571,6 +619,7 @@ public class PlayerController : MonoBehaviour {
         }
         player.velocity = Vector2.zero;
         canPossess = false;
+        dashDir = 0;
         dashing = false;
     }
 
@@ -585,6 +634,8 @@ public class PlayerController : MonoBehaviour {
             yield return null;
         }
         player.velocity = Vector2.zero;
+        dashDir = 0;
+        canPossess = false;
         dashing = false;
     }
 
@@ -601,6 +652,8 @@ public class PlayerController : MonoBehaviour {
             yield return null;
         }
         player.velocity = Vector2.zero;
+        dashDir = 0;
+        canPossess = false;
         dashing = false;
     }
 
@@ -615,6 +668,8 @@ public class PlayerController : MonoBehaviour {
             yield return null;
         }
         player.velocity = Vector2.zero;
+        dashDir = 0;
+        canPossess = false;
         dashing = false;
     }
 
@@ -631,6 +686,8 @@ public class PlayerController : MonoBehaviour {
             yield return null;
         }
         player.velocity = Vector2.zero;
+        dashDir = 0;
+        canPossess = false;
         dashing = false;
     }
 
@@ -686,8 +743,8 @@ public class PlayerController : MonoBehaviour {
     {
         Vector2 vFrom = new Vector2(MovingCoreController.currentXVelocity, MovingCoreController.currentYVelocity);
         Vector2 vTo = player.velocity;
-        vTo.x = 10f * vFrom.x;
-        vTo.y = 10f * vFrom.y;
+        vTo.x = 3f * vFrom.x;
+        vTo.y = 3f * vFrom.y;
         Debug.Log(vTo + " Given");
         return vTo;
     }

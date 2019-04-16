@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="dash_forward.png">
+	<!-- Created with Adobe Animate version 18.0.2.126 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="dash_forward0000" x="0" y="0" width="113" height="74"/>
+	<SubTexture name="dash_forward0001" x="113" y="0" width="113" height="74"/>
+	<SubTexture name="dash_forward0002" x="0" y="74" width="113" height="74"/>
+	<SubTexture name="dash_forward0003" x="113" y="74" width="113" height="74"/>
+	<SubTexture name="dash_forward0004" x="0" y="148" width="113" height="74"/>
+	<SubTexture name="dash_forward0005" x="113" y="148" width="113" height="74"/>
+	<SubTexture name="dash_forward0006" x="0" y="222" width="113" height="74"/>
+	<SubTexture name="dash_forward0007" x="113" y="222" width="113" height="74"/>
+	<SubTexture name="dash_forward0008" x="0" y="296" width="113" height="74"/>
+	<SubTexture name="dash_forward0009" x="113" y="296" width="113" height="74"/>
+</TextureAtlas>

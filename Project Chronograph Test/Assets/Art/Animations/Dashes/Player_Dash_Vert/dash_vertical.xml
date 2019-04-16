@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="dash_vertical.png">
+	<!-- Created with Adobe Animate version 18.0.2.126 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="dash_vertical0000" x="0" y="0" width="72" height="106"/>
+	<SubTexture name="dash_vertical0001" x="72" y="0" width="72" height="106"/>
+	<SubTexture name="dash_vertical0002" x="144" y="0" width="72" height="106"/>
+	<SubTexture name="dash_vertical0003" x="0" y="106" width="72" height="106"/>
+	<SubTexture name="dash_vertical0004" x="72" y="106" width="72" height="106"/>
+	<SubTexture name="dash_vertical0005" x="144" y="106" width="72" height="106"/>
+	<SubTexture name="dash_vertical0006" x="0" y="212" width="72" height="106"/>
+	<SubTexture name="dash_vertical0007" x="72" y="212" width="72" height="106"/>
+	<SubTexture name="dash_vertical0008" x="144" y="212" width="72" height="106"/>
+	<SubTexture name="dash_vertical0009" x="0" y="318" width="72" height="106"/>
+</TextureAtlas>

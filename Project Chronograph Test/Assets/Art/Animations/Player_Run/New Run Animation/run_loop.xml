@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureAtlas imagePath="run_loop.png">
+	<!-- Created with Adobe Animate version 18.0.2.126 -->
+	<!-- http://www.adobe.com/products/animate.html -->
+	<SubTexture name="run_loop0000" x="0" y="0" width="56" height="85"/>
+	<SubTexture name="run_loop0001" x="56" y="0" width="56" height="85"/>
+	<SubTexture name="run_loop0002" x="112" y="0" width="56" height="85"/>
+	<SubTexture name="run_loop0003" x="168" y="0" width="56" height="85"/>
+	<SubTexture name="run_loop0004" x="224" y="0" width="56" height="85"/>
+	<SubTexture name="run_loop0005" x="280" y="0" width="56" height="85"/>
+	<SubTexture name="run_loop0006" x="336" y="0" width="56" height="85"/>
+	<SubTexture name="run_loop0007" x="392" y="0" width="56" height="85"/>
+	<SubTexture name="run_loop0008" x="448" y="0" width="56" height="85"/>
+	<SubTexture name="run_loop0009" x="0" y="85" width="56" height="85"/>
+	<SubTexture name="run_loop0010" x="56" y="85" width="56" height="85"/>
+	<SubTexture name="run_loop0011" x="112" y="85" width="56" height="85"/>
+	<SubTexture name="run_loop0012" x="168" y="85" width="56" height="85"/>
+	<SubTexture name="run_loop0013" x="224" y="85" width="56" height="85"/>
+	<SubTexture name="run_loop0014" x="280" y="85" width="56" height="85"/>
+	<SubTexture name="run_loop0015" x="336" y="85" width="56" height="85"/>
+	<SubTexture name="run_loop0016" x="392" y="85" width="56" height="85"/>
+	<SubTexture name="run_loop0017" x="448" y="85" width="56" height="85"/>
+	<SubTexture name="run_loop0018" x="0" y="170" width="56" height="85"/>
+	<SubTexture name="run_loop0019" x="56" y="170" width="56" height="85"/>
+	<SubTexture name="run_loop0020" x="112" y="170" width="56" height="85"/>
+	<SubTexture name="run_loop0021" x="168" y="170" width="56" height="85"/>
+	<SubTexture name="run_loop0022" x="224" y="170" width="56" height="85"/>
+	<SubTexture name="run_loop0023" x="280" y="170" width="56" height="85"/>
+	<SubTexture name="run_loop0024" x="336" y="170" width="56" height="85"/>
+	<SubTexture name="run_loop0025" x="392" y="170" width="56" height="85"/>
+</TextureAtlas>
