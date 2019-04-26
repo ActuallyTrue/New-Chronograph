@@ -36,7 +36,7 @@ public class KillPlayer : MonoBehaviour
         player.enabled = false;
         //play death animation
         transitionsAnim.SetTrigger("end2"); //play a level reset transition, not end2. 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1.5f);
         player.enabled = true;
         SceneManager.LoadScene(levelName);
     }
