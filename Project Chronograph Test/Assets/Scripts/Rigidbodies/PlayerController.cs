@@ -9,8 +9,15 @@ public class PlayerController : MonoBehaviour {
     RigidbodyMovement2D Movement;
 
     //variables for getting input and controlling speed
-    [HideInInspector]
-    public Vector2 moveInput;
+
+    private Vector2 moveInput;
+    public Vector2 MoveInput
+    {
+        get
+        {
+            return moveInput;
+        }
+    }
     [HideInInspector]
     public Vector2 pushInput; //Input specifically for when you possess a push core
     public float moveSpeed = 6f;
@@ -115,6 +122,8 @@ public class PlayerController : MonoBehaviour {
     private void Awake()
     {
         boxCollider = GetComponent<BoxCollider2D>();
+        //HumanMovementStateMachine humanMovementStateMachine = new HumanMovementStateMachine();
+        //humanMovementStateMachine.OnEnter();
     }
     // Use this for initialization
     void Start () {
@@ -162,6 +171,8 @@ public class PlayerController : MonoBehaviour {
             afterWallJumpTimer -= Time.deltaTime;
         }
     }
+
+    const string Player_State = "PlayerState";
 
     // Update is called once per frame
     void Update()
@@ -382,7 +393,7 @@ public class PlayerController : MonoBehaviour {
                 {
                     //up left
                     dashDir = 6;
-                    StartCoroutine(DashUpLeft(rb));
+                    StartCoroutine(DashUpLeft(rb, facingRight));
                 }
                 if ((moveInput.x < 0.1f && moveInput.x > -0.1) && moveInput.y > 0.1f)
                 {
@@ -507,7 +518,7 @@ public class PlayerController : MonoBehaviour {
                 //if you are possessing a push core, then
                 else {
                     pushInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-                    isCancelledPressed = Input.GetButtonDown("Jump");
+                    isCancelledPressed = Input.GetButtonDown(AllText.someText /*"Jump"*/);
                     if (PushCoreController.pushTimer <= 0 || isCancelledPressed)
                     {
                         possessionTimer = possessionTimerOriginal;
@@ -605,7 +616,9 @@ public class PlayerController : MonoBehaviour {
         dashing = false;
     }
 
-    IEnumerator DashUpLeft(Rigidbody2D player)
+    //Zane broke this thing.
+    // This is the template for condensing many of these coroutines 
+    IEnumerator DashUpLeft(Rigidbody2D player, bool isRight)
     {
         currentState = PlayerStates.Dashing;
         float timer = 0;
@@ -613,7 +626,7 @@ public class PlayerController : MonoBehaviour {
         float dashSpeedY = dashSpeed * Mathf.Sin(Mathf.PI / 4);
         while (timer < 0.2 && dashing)
         {
-            player.velocity = new Vector2(-dashSpeedX, dashSpeedY);
+            player.velocity = new Vector2(isRight ? dashSpeedX : -dashSpeedX, dashSpeedY);
             timer += Time.deltaTime;
             yield return null;
         }
